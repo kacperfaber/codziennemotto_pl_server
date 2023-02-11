@@ -15,4 +15,10 @@ open class User {
 
     @Column(name = "password_hash")
     open lateinit var passwordHash: String
+
+    @OneToMany(mappedBy = "user")
+    open lateinit var readers: MutableList<Reader>
+
+    @OneToMany(mappedBy = "owner")
+    open lateinit var textSets: MutableList<TextSet>
 }
