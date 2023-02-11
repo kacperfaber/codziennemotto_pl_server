@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RestController
 import pl.codziennemotto.controllers.ControllerBase
 import pl.codziennemotto.services.authentication.AuthenticationService
 import pl.codziennemotto.services.token.TokenService
+import pl.codziennemotto.services.user.UserService
 
 @RestController
-class AuthenticationController(private val tokenService: TokenService, private val authenticationService: AuthenticationService) :
-    ControllerBase() {
+class AuthenticationController(userService: UserService, private val tokenService: TokenService, private val authenticationService: AuthenticationService) :
+    ControllerBase(userService) {
 
     class AuthPayload {
         lateinit var login: String
