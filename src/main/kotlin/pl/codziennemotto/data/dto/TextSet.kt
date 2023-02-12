@@ -30,4 +30,7 @@ open class TextSet {
 
     @Column(name = "owner_id", insertable = false, updatable = false)
     open var ownerId: Int? = null
+
+    @OneToMany(mappedBy = "textSet")
+    open lateinit var readers: MutableList<Reader>
 }

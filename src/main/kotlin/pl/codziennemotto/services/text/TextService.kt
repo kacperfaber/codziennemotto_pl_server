@@ -6,6 +6,7 @@ import pl.codziennemotto.data.dao.JoinLinkDao
 import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextSetDao
 import pl.codziennemotto.data.dto.Reader
+import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.services.reader.ReaderService
 
@@ -37,4 +38,6 @@ class TextService(
         joinLinkDao.delete(joinLink)
         return joinWithCodeResult(reader, JoinWithCodeResult.OK)
     }
+
+    fun getTextSet(id: Int, authorizedUser: User): TextSet? = textSetDao.getByIdAndUserAllowed(id, authorizedUser)
 }

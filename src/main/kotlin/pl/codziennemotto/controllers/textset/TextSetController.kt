@@ -1,12 +1,14 @@
 package pl.codziennemotto.controllers.textset
 
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import pl.codziennemotto.controllers.ControllerBase
 import pl.codziennemotto.data.dto.Reader
+import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.security.Authenticated
 import pl.codziennemotto.services.text.TextService
 import pl.codziennemotto.services.user.UserService
@@ -24,4 +26,9 @@ class TextSetController(userService: UserService, private val textService: TextS
             else -> badRequest()
         }
     }
+
+    @GetMapping("{id}")
+    fun textSetByIdEndpoint(@PathVariable id: Int): ResponseEntity<TextSet> = of(textService.getTextSet(id, user!!))
+
+
 }
