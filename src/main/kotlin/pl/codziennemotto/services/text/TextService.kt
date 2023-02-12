@@ -72,4 +72,10 @@ class TextService(
 
     fun createNewTextSet(user: User, title: String, description: String): TextSet =
         textSetDao.save(generateTextSet(title, description, user))
+
+    fun deleteText(setId: Int, textId: Int, authorizedUser: User): Boolean {
+        val text = textDao.getByIdAndTextSetIdAndTextSetOwner(textId, setId, authorizedUser) ?: return false
+        textDao.delete(text)
+        return true
+    }
 }

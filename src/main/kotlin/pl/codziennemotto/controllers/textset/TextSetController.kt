@@ -15,12 +15,16 @@ import java.time.LocalDate
 @RestController
 @RequestMapping("text-set")
 @Authenticated
-class TextSetController(userService: UserService, private val textService: TextService, private val joinLinkService: JoinLinkService) : ControllerBase(userService) {
+class TextSetController(
+    userService: UserService,
+    private val textService: TextService,
+    private val joinLinkService: JoinLinkService
+) : ControllerBase(userService) {
     @PostMapping("{id}/join-with-code/{code}")
     fun joinWithCodeEndpoint(@PathVariable id: Int, @PathVariable code: String): ResponseEntity<Reader?> {
         val result = textService.joinWithCode(id, user!!, code)
 
-        return when(result.result) {
+        return when (result.result) {
             TextService.JoinWithCodeResult.OK -> ok(result.reader)
             else -> badRequest()
         }
@@ -59,4 +63,8 @@ class TextSetController(userService: UserService, private val textService: TextS
 
     @PostMapping("{id}/create-join-link")
     fun joinLinkEndpoint(@PathVariable id: Int) = joinLinkService.createJoinLink(id, user!!)
+
+    @DeleteMapping("{setId}/{textId}")
+    fun deleteTextByIdEndpoint(@PathVariable setId: Int, @PathVariable textId: Int): ResponseEntity<Boolean> =
+        ofBoolean(textService.deleteText(setId, textId, user!!))
 }
