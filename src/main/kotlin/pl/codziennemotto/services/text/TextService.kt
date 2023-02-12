@@ -6,9 +6,11 @@ import pl.codziennemotto.data.dao.JoinLinkDao
 import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextSetDao
 import pl.codziennemotto.data.dto.Reader
+import pl.codziennemotto.data.dto.Text
 import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.services.reader.ReaderService
+import java.time.LocalDateTime
 
 @Component
 class TextService(
@@ -40,4 +42,9 @@ class TextService(
     }
 
     fun getTextSet(id: Int, authorizedUser: User): TextSet? = textSetDao.getByIdAndUserAllowed(id, authorizedUser)
+    fun getTextSetReaders(id: Int, authorizedUser: User): List<Reader> =
+        textSetDao.getReadersByIdAndUser(id, authorizedUser)
+
+    fun getAllTexts(id: Int, authorizedUser: User) = textSetDao.getAllTextsByIdAndUser(id, authorizedUser)
+    fun getPastTexts(id: Int, authorizedUser: User): List<Text> = textSetDao.getPastTextsByIdAndUser(id, authorizedUser, LocalDateTime.now())
 }
