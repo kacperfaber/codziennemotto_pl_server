@@ -36,4 +36,14 @@ class TextSetController(userService: UserService, private val textService: TextS
 
     @GetMapping("{id}/texts/past")
     fun pastTextsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getPastTexts(id, user!!))
+
+    class AddTextPayload {
+        lateinit var text: String
+        var date: LocalDate? = null
+        var order: Int = 0
+    }
+
+    @PutMapping("{id}/add")
+    fun addTextByIdEndpoint(@PathVariable id: Int, @RequestBody payload: AddTextPayload): ResponseEntity<Text> =
+        of(textService.addText(id, user!!, payload.text, payload.date, payload.order))
 }

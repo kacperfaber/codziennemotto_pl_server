@@ -4,12 +4,14 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 import pl.codziennemotto.data.dao.JoinLinkDao
 import pl.codziennemotto.data.dao.ReaderDao
+import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
 import pl.codziennemotto.data.dto.Reader
 import pl.codziennemotto.data.dto.Text
 import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.services.reader.ReaderService
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Component
@@ -17,7 +19,8 @@ class TextService(
     private val textSetDao: TextSetDao,
     private val joinLinkDao: JoinLinkDao,
     private val readerDao: ReaderDao,
-    private val readerService: ReaderService
+    private val readerService: ReaderService,
+    private val textDao: TextDao
 ) {
     enum class JoinWithCodeResult(val value: Int) {
         AlreadyJoined(0),
@@ -47,4 +50,16 @@ class TextService(
 
     fun getAllTexts(id: Int, authorizedUser: User) = textSetDao.getAllTextsByIdAndUser(id, authorizedUser)
     fun getPastTexts(id: Int, authorizedUser: User): List<Text> = textSetDao.getPastTextsByIdAndUser(id, authorizedUser, LocalDateTime.now())
+
+    private fun generateText(text: String, date: LocalDate?, order: Int, textSet: TextSet): Text = Text().apply {
+        this.order = order
+        this.textSet = textSet
+        this.date = date
+        this.text = text
+    }
+
+    fun addText(id: Int, authorizedUser: User, text: String, date: LocalDate?, order: Int): Text? {
+        val textSet = textSetDao.getByIdAndOwner(id, authorizedUser) ?: return null
+        return textDao.save(generateText(text, date, order, textSet))
+    }
 }
