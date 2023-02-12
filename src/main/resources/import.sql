@@ -1,0 +1,1 @@
+INSERT INTO `user`(email, username, password_hash) VALUES ('kacperf1234@gmail.com', 'kacperfaber', 'HelloWorld123');

@@ -17,6 +17,7 @@ open class Text {
 
     open var date: LocalDate? = null
 
+    @Column(name = "_order_")
     open var order: Int = 0
 
     open var shown: LocalDate? = null

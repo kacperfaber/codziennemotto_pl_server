@@ -16,10 +16,10 @@ open class TextSet {
 
     open lateinit var description: String
 
-    @OneToMany(mappedBy = "text_set")
+    @OneToMany(mappedBy = "textSet")
     open lateinit var texts: MutableList<Text>
 
-    @OneToMany(mappedBy = "text_set")
+    @OneToMany(mappedBy = "textSet")
     open lateinit var joinLinks: MutableList<JoinLink>
 
     @JoinColumn(name = "owner_id")
