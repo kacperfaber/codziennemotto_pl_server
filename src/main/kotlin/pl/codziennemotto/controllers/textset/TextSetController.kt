@@ -46,4 +46,15 @@ class TextSetController(userService: UserService, private val textService: TextS
     @PutMapping("{id}/add")
     fun addTextByIdEndpoint(@PathVariable id: Int, @RequestBody payload: AddTextPayload): ResponseEntity<Text> =
         of(textService.addText(id, user!!, payload.text, payload.date, payload.order))
+
+    class CreateNewTextSetPayload {
+        lateinit var title: String
+        lateinit var description: String
+    }
+
+    @PostMapping("/create-new")
+    fun createNewTextSetEndpoint(@RequestBody payload: CreateNewTextSetPayload): ResponseEntity<TextSet> =
+        of(textService.createNewTextSet(user!!, payload.title, payload.description))
+
+
 }

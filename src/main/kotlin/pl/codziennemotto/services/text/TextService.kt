@@ -38,7 +38,8 @@ class TextService(
     fun joinWithCode(textSetId: Int, authorizedUser: User, code: String): JoinWithCode {
         val textSet = textSetDao.findByIdOrNull(textSetId) ?: return joinWithCodeResult(null, JoinWithCodeResult.TextSetNotFound)
         if (readerService.isUserReader(authorizedUser, textSet)) return joinWithCodeResult(null, JoinWithCodeResult.AlreadyJoined)
-        val joinLink = joinLinkDao.getByCodeAndTextSetId(code, textSetId) ?: return joinWithCodeResult(null, JoinWithCodeResult.CodeNotFound)
+        val joinLink =
+            joinLinkDao.getByCodeAndTextSetId(code, textSetId) ?: return joinWithCodeResult(null, JoinWithCodeResult.CodeNotFound)
         val reader = readerService.createReader(authorizedUser, textSet)
         joinLinkDao.delete(joinLink)
         return joinWithCodeResult(reader, JoinWithCodeResult.OK)
@@ -49,7 +50,8 @@ class TextService(
         textSetDao.getReadersByIdAndUser(id, authorizedUser)
 
     fun getAllTexts(id: Int, authorizedUser: User) = textSetDao.getAllTextsByIdAndUser(id, authorizedUser)
-    fun getPastTexts(id: Int, authorizedUser: User): List<Text> = textSetDao.getPastTextsByIdAndUser(id, authorizedUser, LocalDateTime.now())
+    fun getPastTexts(id: Int, authorizedUser: User): List<Text> =
+        textSetDao.getPastTextsByIdAndUser(id, authorizedUser, LocalDateTime.now())
 
     private fun generateText(text: String, date: LocalDate?, order: Int, textSet: TextSet): Text = Text().apply {
         this.order = order
@@ -62,4 +64,13 @@ class TextService(
         val textSet = textSetDao.getByIdAndOwner(id, authorizedUser) ?: return null
         return textDao.save(generateText(text, date, order, textSet))
     }
+
+    private fun generateTextSet(title: String, description: String, user: User) = TextSet().apply {
+        this.description = description
+        this.owner = user
+        this.title = title
+    }
+
+    fun createNewTextSet(user: User, title: String, description: String): TextSet =
+        textSetDao.save(generateTextSet(title, description, user))
 }
