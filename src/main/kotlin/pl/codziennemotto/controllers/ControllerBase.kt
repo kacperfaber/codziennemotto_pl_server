@@ -16,6 +16,8 @@ open class ControllerBase(protected val userService: UserService)  {
 
     protected fun <T> ok(t: T): ResponseEntity<T> = ResponseEntity.ok(t)
 
+    protected fun <T> of(t: T?): ResponseEntity<T> = if (t != null) ok(t) else badRequest()
+
     protected val user: User?
         get() = if (userId == null) null else (userService.getUser(userId!!))
 }
