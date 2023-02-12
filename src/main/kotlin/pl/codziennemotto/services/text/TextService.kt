@@ -6,10 +6,8 @@ import pl.codziennemotto.data.dao.JoinLinkDao
 import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
-import pl.codziennemotto.data.dto.Reader
-import pl.codziennemotto.data.dto.Text
-import pl.codziennemotto.data.dto.TextSet
-import pl.codziennemotto.data.dto.User
+import pl.codziennemotto.data.dto.*
+import pl.codziennemotto.services.joinlink.JoinLinkCodeGenerator
 import pl.codziennemotto.services.reader.ReaderService
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,7 +18,8 @@ class TextService(
     private val joinLinkDao: JoinLinkDao,
     private val readerDao: ReaderDao,
     private val readerService: ReaderService,
-    private val textDao: TextDao
+    private val textDao: TextDao,
+    private val joinLinkCodeGenerator: JoinLinkCodeGenerator
 ) {
     enum class JoinWithCodeResult(val value: Int) {
         AlreadyJoined(0),
