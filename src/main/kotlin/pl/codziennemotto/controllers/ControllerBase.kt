@@ -2,9 +2,9 @@ package pl.codziennemotto.controllers
 
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
+import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.security.TokenAuthentication
 import pl.codziennemotto.services.user.UserService
-import pl.codziennemotto.data.dto.User
 
 open class ControllerBase(protected val userService: UserService) {
     protected val userId: Int?

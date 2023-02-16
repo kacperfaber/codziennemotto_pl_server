@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import pl.codziennemotto.data.dto.User
 
-interface UserDao : JpaRepository<User, Int>{
+interface UserDao : JpaRepository<User, Int> {
     fun getByUsername(username: String): User?
     fun getByEmail(email: String): User?
 

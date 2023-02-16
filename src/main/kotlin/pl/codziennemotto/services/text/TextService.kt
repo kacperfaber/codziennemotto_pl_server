@@ -5,7 +5,10 @@ import org.springframework.stereotype.Component
 import pl.codziennemotto.data.dao.JoinLinkDao
 import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
-import pl.codziennemotto.data.dto.*
+import pl.codziennemotto.data.dto.Reader
+import pl.codziennemotto.data.dto.Text
+import pl.codziennemotto.data.dto.TextSet
+import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.services.reader.ReaderService
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -41,6 +44,7 @@ class TextService(
     fun getTextSet(id: Int, authorizedUser: User): TextSet? {
         return textSetDao.getByIdAndUserAllowed(id, authorizedUser)
     }
+
     fun getTextSetReaders(id: Int, authorizedUser: User): List<Reader> =
         textSetDao.getReadersByIdAndUser(id, authorizedUser)
 

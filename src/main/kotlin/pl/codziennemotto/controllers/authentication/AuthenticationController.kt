@@ -12,7 +12,11 @@ import pl.codziennemotto.services.token.TokenService
 import pl.codziennemotto.services.user.UserService
 
 @RestController
-class AuthenticationController(userService: UserService, private val tokenService: TokenService, private val authenticationService: AuthenticationService) :
+class AuthenticationController(
+    userService: UserService,
+    private val tokenService: TokenService,
+    private val authenticationService: AuthenticationService
+) :
     ControllerBase(userService) {
 
     class AuthPayload {
