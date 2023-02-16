@@ -1,10 +1,12 @@
 package pl.codziennemotto.controllers.authentication
 
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import pl.codziennemotto.controllers.ControllerBase
+import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.services.authentication.AuthenticationService
 import pl.codziennemotto.services.token.TokenService
 import pl.codziennemotto.services.user.UserService
@@ -29,4 +31,7 @@ class AuthenticationController(userService: UserService, private val tokenServic
 
         return ok(AuthResponse(authenticatedUser.id!!, authenticatedUser.email, authenticatedUser.username, token))
     }
+
+    @GetMapping("current")
+    fun currentEndpoint(): ResponseEntity<User> = of(user)
 }

@@ -24,7 +24,7 @@ open class TextSet {
     @JsonIgnore
     open lateinit var joinLinks: MutableList<JoinLink>
 
-    @JoinColumn(name = "owner_id")
+    @JoinColumn(name = "owner_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JsonIgnore

@@ -12,7 +12,7 @@ open class Reader {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     open var id: Int? = null
 
-    @JoinColumn(name = "text_set_id")
+    @JoinColumn(name = "text_set_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JsonIgnore
@@ -21,7 +21,7 @@ open class Reader {
     @Column(name = "text_set_id", insertable = false, updatable = false)
     open var textSetId: Int? = null
 
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     @JsonIgnore

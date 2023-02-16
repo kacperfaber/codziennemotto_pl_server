@@ -38,7 +38,9 @@ class TextService(
         return joinWithCodeResult(reader, JoinWithCodeResult.OK)
     }
 
-    fun getTextSet(id: Int, authorizedUser: User): TextSet? = textSetDao.getByIdAndUserAllowed(id, authorizedUser)
+    fun getTextSet(id: Int, authorizedUser: User): TextSet? {
+        return textSetDao.getByIdAndUserAllowed(id, authorizedUser)
+    }
     fun getTextSetReaders(id: Int, authorizedUser: User): List<Reader> =
         textSetDao.getReadersByIdAndUser(id, authorizedUser)
 
