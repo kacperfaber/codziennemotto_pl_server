@@ -1,5 +1,6 @@
 package pl.codziennemotto.data.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
@@ -17,8 +18,10 @@ open class User {
     open lateinit var passwordHash: String
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     open lateinit var readers: MutableList<Reader>
 
     @OneToMany(mappedBy = "owner")
+    @JsonIgnore
     open lateinit var textSets: MutableList<TextSet>
 }

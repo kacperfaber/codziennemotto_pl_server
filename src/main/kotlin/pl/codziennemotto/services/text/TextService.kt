@@ -78,4 +78,8 @@ class TextService(
         textDao.delete(text)
         return true
     }
+
+    fun getAllByOwner(user: User): List<TextSet> = textSetDao.getAllByOwner(user)
+
+    fun getAllByReader(user: User): List<TextSet> = textSetDao.getAllByReader(user)
 }

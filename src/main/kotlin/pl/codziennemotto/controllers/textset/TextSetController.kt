@@ -67,4 +67,10 @@ class TextSetController(
     @DeleteMapping("{setId}/{textId}")
     fun deleteTextByIdEndpoint(@PathVariable setId: Int, @PathVariable textId: Int): ResponseEntity<Boolean> =
         ofBoolean(textService.deleteText(setId, textId, user!!))
+
+    @GetMapping("where-i-am-owner")
+    fun setsIAmOwnerEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByOwner(user!!))
+
+    @GetMapping("where-i-am-reader")
+    fun setsIAmReaderEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByReader(user!!))
 }

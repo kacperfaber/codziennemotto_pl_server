@@ -17,9 +17,11 @@ open class TextSet {
     open lateinit var description: String
 
     @OneToMany(mappedBy = "textSet")
+    @JsonIgnore
     open lateinit var texts: MutableList<Text>
 
     @OneToMany(mappedBy = "textSet")
+    @JsonIgnore
     open lateinit var joinLinks: MutableList<JoinLink>
 
     @JoinColumn(name = "owner_id")
@@ -32,5 +34,6 @@ open class TextSet {
     open var ownerId: Int? = null
 
     @OneToMany(mappedBy = "textSet")
+    @JsonIgnore
     open lateinit var readers: MutableList<Reader>
 }
