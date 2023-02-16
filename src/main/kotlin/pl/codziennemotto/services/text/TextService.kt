@@ -3,11 +3,9 @@ package pl.codziennemotto.services.text
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 import pl.codziennemotto.data.dao.JoinLinkDao
-import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
 import pl.codziennemotto.data.dto.*
-import pl.codziennemotto.services.joinlink.JoinLinkCodeGenerator
 import pl.codziennemotto.services.reader.ReaderService
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,10 +14,8 @@ import java.time.LocalDateTime
 class TextService(
     private val textSetDao: TextSetDao,
     private val joinLinkDao: JoinLinkDao,
-    private val readerDao: ReaderDao,
     private val readerService: ReaderService,
-    private val textDao: TextDao,
-    private val joinLinkCodeGenerator: JoinLinkCodeGenerator
+    private val textDao: TextDao
 ) {
     enum class JoinWithCodeResult(val value: Int) {
         AlreadyJoined(0),
@@ -28,9 +24,7 @@ class TextService(
         OK(3)
     }
 
-    data class JoinWithCode(val reader: Reader?, val result: JoinWithCodeResult) {
-
-    }
+    data class JoinWithCode(val reader: Reader?, val result: JoinWithCodeResult)
 
     private fun joinWithCodeResult(reader: Reader?, result: JoinWithCodeResult) = JoinWithCode(reader, result)
 
