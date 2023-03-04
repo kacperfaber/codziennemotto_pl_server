@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextDao
+import pl.codziennemotto.data.dto.Text
 import pl.codziennemotto.data.dto.User
 import testutils.IntegrationTest
 import kotlin.test.assertEquals
@@ -31,8 +32,14 @@ class TextServiceIntegrationTest {
 
     @Test
     fun `deleteText deletes the Text from database and returns true`() {
+        textDao.save(Text().apply {
+            this.id = 121
+            this.order = 1
+            this.textSetId = 1
+        })
+
         val before = textDao.findAll().count()
-        assertTrue(textService.deleteText(1, 1, User().apply { this.id = 1 }))
+        assertTrue(textService.deleteText(1, 121, User().apply { this.id = 1 }))
         val after = textDao.findAll().count()
         assertEquals(before - 1, after)
     }
@@ -50,14 +57,5 @@ class TextServiceIntegrationTest {
         assertFalse {
             textService.deleteText(1, 20, User().apply { this.id = 1 })
         }
-    }
-
-    @Test
-    fun `deleteText returns true if database is affected`() {
-        val before = textDao.findAll().count()
-        println("before is $before")
-        assertTrue(textService.deleteText(1, 1, User().apply { this.id = 1 }))
-        val after = textDao.findAll().count()
-        assertEquals(before - 1, after)
     }
 }

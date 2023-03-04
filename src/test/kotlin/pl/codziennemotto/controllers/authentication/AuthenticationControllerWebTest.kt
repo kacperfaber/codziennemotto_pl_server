@@ -1,5 +1,6 @@
 package pl.codziennemotto.controllers.authentication
 
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.*
@@ -10,13 +11,14 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.services.authentication.AuthenticationService
 import pl.codziennemotto.services.token.TokenService
 import testutils.WebLayerTest
+import testutils.auth
 import java.util.*
-import org.hamcrest.Matchers.`is`
 
 @WebLayerTest
 @SpringBootTest(properties = ["spring.profiles.active=test"])
@@ -110,6 +112,25 @@ class AuthenticationControllerWebTest {
             jsonPath("$.userEmail", `is`(user.email))
             jsonPath("$.username", `is`(user.username))
             jsonPath("$.userId", `is`(user.id))
+        }
+    }
+
+    @Test
+    fun `currentEndpoint returns badRequest if not authorized`() {
+        mockMvc.get("/current").andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `currentEndpoint returns OK if authorized`() {
+        mockMvc.get("/current") { auth(1) }.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `currentEndpoint returns expected data from database if authorized`() {
+        mockMvc.get("/current") { auth(1) }.andExpect {
+            jsonPath("$.userEmail", `is`("kacperf1234@gmail.com"))
+            jsonPath("$.username", `is`("kacperfaber"))
+            jsonPath("$.userId", `is`(1))
         }
     }
 }

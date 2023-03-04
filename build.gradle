@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'io.swagger:swagger-annotations:1.6.8'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -61,5 +62,11 @@ tasks.register("integrationTest", Test) {
 tasks.register("webLayerTest", Test) {
     useJUnitPlatform {
         includeTags 'WebLayerTest'
+    }
+}
+
+tasks.register("allTests", Test) {
+    useJUnitPlatform {
+        includeTags 'UnitTest', 'IntegrationTest', 'WebLayerTest'
     }
 }

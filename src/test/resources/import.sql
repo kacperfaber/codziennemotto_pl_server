@@ -9,3 +9,5 @@ INSERT INTO text(id, text_set_id, text, _order_) VALUES (2, 1, 'Second Text', 0)
 
 INSERT INTO reader(id, user_id, text_set_id) VALUES(1, 2, 1);
 INSERT INTO reader(id, user_id, text_set_id) VALUES(2, 3, 1);
+
+ALTER TABLE text_set ALTER COLUMN id SET DEFAULT 5;
