@@ -4,5 +4,8 @@ INSERT INTO `user`(id, email, username, password_hash) VALUES (3, 'darekfatek@gm
 
 INSERT INTO text_set(id, owner_id, title, description) VALUES (1, 1, 'HelloWorld!', 'This is the greatest set in the page.');
 
+INSERT INTO text(id, text_set_id, text, _order_) VALUES (1, 1, 'Hello World!', 0);
+INSERT INTO text(id, text_set_id, text, _order_) VALUES (2, 1, 'Second Text', 0);
+
 INSERT INTO reader(id, user_id, text_set_id) VALUES(1, 2, 1);
 INSERT INTO reader(id, user_id, text_set_id) VALUES(2, 3, 1);

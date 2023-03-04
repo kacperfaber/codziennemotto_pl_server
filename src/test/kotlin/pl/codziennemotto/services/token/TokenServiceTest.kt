@@ -6,6 +6,7 @@ import org.mockito.internal.verification.Times
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import testutils.UnitTest
 import kotlin.test.assertEquals
 
 @SpringBootTest(properties = ["spring.profiles.active=test"])
@@ -17,6 +18,7 @@ class TokenServiceTest {
     lateinit var tokenWriter: AccessTokenWriter
 
     @Test
+    @UnitTest
     fun `writeToken returns what 'tokenWriter' returned`() {
         val accessToken = AccessToken(0, "test", "test")
         Mockito.`when`(tokenWriter.writeToken(accessToken)).thenReturn("test")
@@ -24,6 +26,7 @@ class TokenServiceTest {
     }
 
     @Test
+    @UnitTest
     fun `writeToken calls 'tokenWriter' with expected AccessToken instance`() {
         val accessToken = AccessToken(0, "test", "test")
         Mockito.`when`(tokenWriter.writeToken(accessToken)).thenReturn("test")

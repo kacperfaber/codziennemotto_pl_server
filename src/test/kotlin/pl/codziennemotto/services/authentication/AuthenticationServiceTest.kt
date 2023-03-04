@@ -1,5 +1,6 @@
 package pl.codziennemotto.services.authentication
 
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.params.ParameterizedTest
@@ -13,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import pl.codziennemotto.data.dao.UserDao
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.security.PasswordTool
+import testutils.UnitTest
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -42,6 +44,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
+    @UnitTest
     fun `tryAuthenticate does not throw`() {
         assertDoesNotThrow { authenticationService.tryAuthenticate("", "") }
         assertDoesNotThrow { authenticationService.tryAuthenticate("kacperfaber@gmail.com", "Test12345%%!@#") }
@@ -52,6 +55,7 @@ class AuthenticationServiceTest {
 
     @ParameterizedTest
     @MethodSource("valueSource")
+    @UnitTest
     fun `tryAuthenticate returns null if userDao returns null`(username: String, password: String) {
         `when`(userDao.getByUsernameOrEmail(anyString())).thenReturn(null)
         assertNull(authenticationService.tryAuthenticate(username, password))
@@ -59,6 +63,7 @@ class AuthenticationServiceTest {
 
     @ParameterizedTest
     @MethodSource("valueSource")
+    @UnitTest
     fun `tryAuthenticate returns null if passwordTool returns false`(username: String, password: String) {
         `when`(passwordTool.matches(anyString(), anyString())).thenReturn(false)
         assertNull(authenticationService.tryAuthenticate(username, password))
@@ -66,6 +71,7 @@ class AuthenticationServiceTest {
 
     @ParameterizedTest
     @MethodSource("valueSource")
+    @UnitTest
     fun `tryAuthenticate returns object returned by userDao if passwordTool returned true`(username: String, password: String) {
         val user = User().apply {
             this.passwordHash = "test"
