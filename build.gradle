@@ -40,5 +40,25 @@ tasks.withType(KotlinCompile) {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        includeTags 'UnitTest'
+    }
+}
+
+tasks.register("unitTest", Test) {
+    useJUnitPlatform {
+        includeTags 'UnitTest'
+    }
+}
+
+tasks.register("integrationTest", Test) {
+    useJUnitPlatform {
+        includeTags 'IntegrationTest'
+    }
+}
+
+tasks.register("webLayerTest", Test) {
+    useJUnitPlatform {
+        includeTags 'WebLayerTest'
+    }
 }
