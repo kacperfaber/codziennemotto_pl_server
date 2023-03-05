@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
@@ -24,6 +25,7 @@ import kotlin.test.assertNotNull
 @SpringBootTest(properties = ["spring.profiles.active=test"])
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension::class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TextSetControllerWebTest {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -40,15 +42,15 @@ class TextSetControllerWebTest {
     @Test
     @IntegrationTest
     fun `textSetByIdEndpoint returns OK if is token presented`() {
-        mockMvc.get("/text-set/1") { auth(1) }.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/0") { auth(1) }.andExpect { status { isOk() } }
     }
 
     @Test
     @IntegrationTest
     fun `textSetByIdEndpoint returns expected TextSet from database`() {
-        mockMvc.get("/text-set/1") { auth(1) }.andExpect {
+        mockMvc.get("/text-set/0") { auth(1) }.andExpect {
             jsonPath("$.ownerId", `is`(1))
-            jsonPath("$.id", `is`(1))
+            jsonPath("$.id", `is`(0))
             jsonPath("$.title", `is`("HelloWorld!"))
             jsonPath("$.description", `is`("This is the greatest set in the page."))
         }

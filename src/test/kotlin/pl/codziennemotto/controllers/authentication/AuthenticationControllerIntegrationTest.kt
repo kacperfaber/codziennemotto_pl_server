@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
+import org.springframework.test.annotation.DirtiesContext
 import testutils.IntegrationTest
 import kotlin.test.assertEquals
 
 @SpringBootTest(properties = ["spring.profiles.active=test"])
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @IntegrationTest
 class AuthenticationControllerIntegrationTest {
     @Autowired

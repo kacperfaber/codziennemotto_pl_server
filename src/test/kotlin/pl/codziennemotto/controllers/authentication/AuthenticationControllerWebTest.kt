@@ -9,13 +9,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.MediaType
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import pl.codziennemotto.data.dto.User
+import pl.codziennemotto.security.TokenAuthentication
 import pl.codziennemotto.services.authentication.AuthenticationService
+import pl.codziennemotto.services.token.AccessToken
 import pl.codziennemotto.services.token.TokenService
+import pl.codziennemotto.services.user.UserService
 import testutils.WebLayerTest
 import testutils.auth
 import java.util.*
@@ -23,6 +29,7 @@ import java.util.*
 @WebLayerTest
 @SpringBootTest(properties = ["spring.profiles.active=test"])
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @ExtendWith(SpringExtension::class)
 class AuthenticationControllerWebTest {
     @Autowired
@@ -33,6 +40,9 @@ class AuthenticationControllerWebTest {
 
     @MockBean
     lateinit var tokenService: TokenService
+
+    @MockBean
+    lateinit var userService: UserService
 
     private fun makeBody(username: String, password: String): String = "{\"login\": \"$username\", \"password\": \"$password\"}"
 
@@ -121,16 +131,22 @@ class AuthenticationControllerWebTest {
     }
 
     @Test
-    fun `currentEndpoint returns OK if authorized`() {
-        mockMvc.get("/current") { auth(1) }.andExpect { status { isOk() } }
-    }
+    fun `currentEndpoint returns expected data from database mock if authorized`() {
+        val email = "kacperf1234@gmail.com"
+        val username = "kacperfaber"
 
-    @Test
-    fun `currentEndpoint returns expected data from database if authorized`() {
+        `when`(tokenService.readToken(anyString())).thenReturn(AccessToken(1, email, username))
+
+        `when`(userService.getUser(anyInt())).thenReturn(User().apply {
+            this.id = 1
+            this.username = username
+            this.email = email
+        })
+
         mockMvc.get("/current") { auth(1) }.andExpect {
-            jsonPath("$.userEmail", `is`("kacperf1234@gmail.com"))
-            jsonPath("$.username", `is`("kacperfaber"))
-            jsonPath("$.userId", `is`(1))
+            jsonPath("$.email", `is`(email))
+            jsonPath("$.username", `is`(username))
+            jsonPath("$.id", `is`(1))
         }
     }
 }

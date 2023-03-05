@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.annotation.DirtiesContext
 import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dto.Text
@@ -15,6 +16,7 @@ import kotlin.test.assertTrue
 
 @SpringBootTest(properties = ["spring.profiles.active=test"])
 @IntegrationTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TextServiceIntegrationTest {
     @Autowired
     lateinit var textService: TextService
@@ -32,14 +34,8 @@ class TextServiceIntegrationTest {
 
     @Test
     fun `deleteText deletes the Text from database and returns true`() {
-        textDao.save(Text().apply {
-            this.id = 121
-            this.order = 1
-            this.textSetId = 1
-        })
-
         val before = textDao.findAll().count()
-        assertTrue(textService.deleteText(1, 121, User().apply { this.id = 1 }))
+        assertTrue(textService.deleteText(0, 121, User().apply { this.id = 1 }))
         val after = textDao.findAll().count()
         assertEquals(before - 1, after)
     }

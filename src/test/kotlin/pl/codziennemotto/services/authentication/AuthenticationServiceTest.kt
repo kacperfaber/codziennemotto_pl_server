@@ -11,6 +11,7 @@ import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.annotation.DirtiesContext
 import pl.codziennemotto.data.dao.UserDao
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.security.PasswordTool
@@ -21,6 +22,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 @SpringBootTest(properties = ["spring.profiles.active=test"])
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class AuthenticationServiceTest {
     @Autowired
     lateinit var authenticationService: AuthenticationService

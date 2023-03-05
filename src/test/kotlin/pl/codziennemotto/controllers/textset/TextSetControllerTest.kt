@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.annotation.DirtiesContext
 import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.security.TokenAuthentication
@@ -20,6 +21,7 @@ import kotlin.test.assertEquals
 
 @SpringBootTest(properties = ["spring.profiles.active=test"])
 @UnitTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class TextSetControllerTest {
     @Autowired
     lateinit var textSetController: TextSetController

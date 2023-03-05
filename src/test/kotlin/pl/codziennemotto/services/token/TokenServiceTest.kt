@@ -8,6 +8,7 @@ import org.mockito.kotlin.eq
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.test.annotation.DirtiesContext
 import testutils.UnitTest
 import kotlin.test.assertEquals
 
