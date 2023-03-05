@@ -1,6 +1,7 @@
 package pl.codziennemotto.controllers.textset
 
 import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,16 +10,18 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.get
-import org.springframework.test.web.servlet.post
+import org.springframework.test.web.servlet.*
+import pl.codziennemotto.data.dao.JoinLinkDao
+import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
 import testutils.IntegrationTest
 import testutils.WebLayerTest
 import testutils.auth
+import java.time.LocalDate
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 
 @WebLayerTest
@@ -32,6 +35,12 @@ class TextSetControllerWebTest {
 
     @Autowired
     lateinit var textSetDao: TextSetDao
+
+    @Autowired
+    lateinit var joinLinkDao: JoinLinkDao
+
+    @Autowired
+    lateinit var textDao: TextDao
 
     @Test
     @IntegrationTest
@@ -108,7 +117,7 @@ class TextSetControllerWebTest {
             contentType = MediaType.APPLICATION_JSON
             content = createNewTextSetBody("Test", "Desc")
         }.andExpect {
-            assertEquals(before+1, textSetDao.findAll().count())
+            assertEquals(before + 1, textSetDao.findAll().count())
         }
     }
 
@@ -122,7 +131,281 @@ class TextSetControllerWebTest {
             contentType = MediaType.APPLICATION_JSON
             content = createNewTextSetBody(title, "Desc")
         }.andExpect {
-            assertNotNull(textSetDao.findAll().firstOrNull {it.title == title})
+            assertNotNull(textSetDao.findAll().firstOrNull { it.title == title })
+        }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `joinLinkEndpoint returns FORBIDDEN if not authorized`() {
+        mockMvc.post("/text-set/0/create-join-link") { }
+            .andExpect {
+                status {
+                    isForbidden()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `joinLinkEndpoint returns OK if authorized`() {
+        mockMvc.post("/text-set/0/create-join-link") { auth(1) }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `joinLinkEndpoint returns expected data`() {
+        mockMvc.post("/text-set/0/create-join-link") { auth(1) }
+            .andExpect {
+                status {
+                    jsonPath("$.code", notNullValue())
+                    jsonPath("$.id", notNullValue())
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `joinLinkEndpoint creates object in database and returns OK`() {
+        val before = joinLinkDao.findAll().filter { it.textSetId == 0 }.count()
+
+        mockMvc.post("/text-set/0/create-join-link") { auth(1) }
+            .andExpect {
+                val after = joinLinkDao.findAll().filter { it.textSetId == 0 }.count()
+                assertTrue { after == before + 1 }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `joinLinkEndpoint returns badRequest if authorized user is not set owner`() {
+        mockMvc.post("/text-set/0/create-join-link") { auth(2) }
+            .andExpect {
+                status {
+                    isBadRequest()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmOwnerEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/where-i-am-owner") { }
+            .andExpect {
+                status {
+                    isForbidden()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmOwnerEndpoint returns OK if authorized`() {
+        mockMvc.get("/text-set/where-i-am-owner") { auth(1) }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmOwnerEndpoint returns expected data from database`() {
+        mockMvc.get("/text-set/where-i-am-owner") { auth(1) }
+            .andExpect {
+                jsonPath("$[0].id", `is`(0))
+                jsonPath("$[0].title", `is`("HelloWorld!"))
+                jsonPath("$[0].description", `is`("This is the greatest set in the page."))
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmOwnerEndpoint returns empty if user is not owner of any TextSet`() {
+        mockMvc.get("/text-set/where-i-am-owner") { auth(2) }
+            .andExpect {
+                jsonPath("$.length()", `is`(0))
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmOwnerEndpoint returns OK if user is not owner of any TextSet`() {
+        mockMvc.get("/text-set/where-i-am-owner") { auth(2) }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmReaderEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/where-i-am-reader") { }
+            .andExpect {
+                status {
+                    isForbidden()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmReaderEndpoint returns OK if authorized`() {
+        mockMvc.get("/text-set/where-i-am-reader") { auth(1) }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmReaderEndpoint returns OK if authorized user is not reading TextSet`() {
+        mockMvc.get("/text-set/where-i-am-reader") { auth(1) }
+            .andExpect {
+                status {
+                    isOk()
+                }
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmReaderEndpoint returns empty list if authorized user is not reading TextSet`() {
+        mockMvc.get("/text-set/where-i-am-reader") { auth(1) }
+            .andExpect {
+                jsonPath("$.length()", `is`(0))
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `setsIAmReaderEndpoint returns expected data from database`() {
+        mockMvc.get("/text-set/where-i-am-reader") { auth(2) }
+            .andExpect {
+                jsonPath("$[0].id", `is`(0))
+                jsonPath("$[0].title", `is`("HelloWorld!"))
+                jsonPath("$[0].description", `is`("This is the greatest set in the page."))
+            }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextByIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.delete("/text-set/0/0").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextByIdEndpoint returns NoContent if authorized as TextSet owner`() {
+        mockMvc.delete("/text-set/0/0") { auth(1) }.andExpect { status { isNoContent() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextByIdEndpoint returns badRequest if authorized is as not TextSet owner`() {
+        mockMvc.delete("/text-set/0/0") { auth(2) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextByIdEndpoint returns badRequest if setId and textId not exists`() {
+        mockMvc.delete("/text-set/1/0") { auth(1) }.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/0/110") { auth(1) }.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/1120/110") { auth(1) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextByIdEndpoint affects database`() {
+        val before = textDao.findAll().count()
+
+        mockMvc.delete("/text-set/0/0") { auth(1) }.andExpect {
+            val after = textDao.findAll().count()
+            assertEquals(before - 1, after)
+        }
+    }
+
+    private fun addTextContent(text: String, date: LocalDate?, order: Int) =
+        "{\"text\": \"$text\", \"date\":$date, \"order\": $order}"
+
+    @Test
+    @IntegrationTest
+    fun `addTextByIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.put("/text-set/0/add") {
+            contentType = MediaType.APPLICATION_JSON
+            content = addTextContent("HelloWorld", null, 0)
+        }.andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `addTextByIdEndpoint returns OK if authorized`() {
+        mockMvc.put("/text-set/0/add") {
+            auth(1)
+            contentType = MediaType.APPLICATION_JSON
+            content = addTextContent("HelloWorld", null, 0)
+        }.andExpect { status { isOk() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `addTextByIdEndpoint returns badRequest if authorized user is not TextSet owner`() {
+        mockMvc.put("/text-set/0/add") {
+            auth(2)
+            contentType = MediaType.APPLICATION_JSON
+            content = addTextContent("HelloWorld", null, 0)
+        }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `addTextByIdEndpoint affects database`() {
+        val before = textDao.findAll().count()
+        mockMvc.put("/text-set/0/add") {
+            auth(1)
+            contentType = MediaType.APPLICATION_JSON
+            content = addTextContent("HelloWorld", null, 0)
+        }.andExpect {
+            val after = textDao.findAll().count()
+            assertEquals(before + 1, after)
+        }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `addTextByIdEndpoint creates Text with given 'text'`() {
+        val text = UUID.randomUUID().toString()
+        mockMvc.put("/text-set/0/add") {
+            auth(1)
+            contentType = MediaType.APPLICATION_JSON
+            content = addTextContent(text, null, 0)
+        }.andExpect {
+            assertNotNull(textDao.findAll().filter { it.text == text })
+        }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `addTextByIdEndpoint creates Text with expected date`() {
+        val text = UUID.randomUUID().toString()
+        val date = LocalDate.of(5, 5, 2005)
+        mockMvc.put("/text-set/0/add") {
+            auth(1)
+            contentType = MediaType.APPLICATION_JSON
+            content = addTextContent(text, null, 0)
+        }.andExpect {
+            val t1 = textDao.findAll().firstOrNull { it.text == text }
+            assertEquals(date, t1?.date)
         }
     }
 }

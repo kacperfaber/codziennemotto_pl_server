@@ -1,8 +1,10 @@
 package pl.codziennemotto.controllers.textset
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pl.codziennemotto.controllers.ControllerBase
+import pl.codziennemotto.data.dto.JoinLink
 import pl.codziennemotto.data.dto.Reader
 import pl.codziennemotto.data.dto.Text
 import pl.codziennemotto.data.dto.TextSet
@@ -44,6 +46,7 @@ class TextSetController(
 
     class AddTextPayload {
         lateinit var text: String
+        @JsonFormat(pattern = "yyyy-MM-dd")
         var date: LocalDate? = null
         var order: Int = 0
     }
@@ -62,7 +65,7 @@ class TextSetController(
         of(textService.createNewTextSet(user!!, payload.title, payload.description))
 
     @PostMapping("{id}/create-join-link")
-    fun joinLinkEndpoint(@PathVariable id: Int) = joinLinkService.createJoinLink(id, user!!)
+    fun joinLinkEndpoint(@PathVariable id: Int): ResponseEntity<JoinLink> = of(joinLinkService.createJoinLink(id, user!!))
 
     @DeleteMapping("{setId}/{textId}")
     fun deleteTextByIdEndpoint(@PathVariable setId: Int, @PathVariable textId: Int): ResponseEntity<Boolean> =

@@ -1,19 +1,23 @@
 package pl.codziennemotto.controllers.textset
 
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.anyInt
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.annotation.DirtiesContext
+import pl.codziennemotto.data.dto.JoinLink
 import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.data.dto.User
 import pl.codziennemotto.security.TokenAuthentication
+import pl.codziennemotto.services.joinlink.JoinLinkService
 import pl.codziennemotto.services.text.TextService
 import pl.codziennemotto.services.user.UserService
 import testutils.UnitTest
@@ -31,6 +35,8 @@ class TextSetControllerTest {
 
     @MockBean
     lateinit var userService: UserService
+    @MockBean
+    lateinit var joinLinkService: JoinLinkService
 
     private val user = User().apply {
         this.id = 0
@@ -71,5 +77,21 @@ class TextSetControllerTest {
     @BeforeEach
     fun beforeAll() {
         SecurityContextHolder.getContext().authentication = TokenAuthentication(0, "kacperf1234@gmail.com", "kacperfaber")
+    }
+
+    @Test
+    fun `joinLinkEndpoint returns what joinLinkService returned`() {
+        val joinLink = JoinLink()
+        `when`(userService.getUser(anyInt())).thenReturn(user)
+        `when`(joinLinkService.createJoinLink(anyInt(), any())).thenReturn(joinLink)
+        assertEquals(joinLink, textSetController.joinLinkEndpoint(5).body)
+    }
+
+    @Test
+    fun `joinLinkEndpoint calls joinLinkService with expected setId`() {
+        `when`(joinLinkService.createJoinLink(anyInt(), any())).thenReturn(JoinLink())
+        `when`(userService.getUser(anyInt())).thenReturn(user)
+        textSetController.joinLinkEndpoint(5)
+        verify(joinLinkService).createJoinLink(eq(5), eq(user))
     }
 }
