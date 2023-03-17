@@ -10,6 +10,7 @@ import pl.codziennemotto.data.dto.Text
 import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.security.Authenticated
 import pl.codziennemotto.services.joinlink.JoinLinkService
+import pl.codziennemotto.services.summary.SummaryService
 import pl.codziennemotto.services.text.TextService
 import pl.codziennemotto.services.user.UserService
 import java.time.LocalDate
@@ -20,7 +21,8 @@ import java.time.LocalDate
 class TextSetController(
     userService: UserService,
     private val textService: TextService,
-    private val joinLinkService: JoinLinkService
+    private val joinLinkService: JoinLinkService,
+    private val summaryService: SummaryService
 ) : ControllerBase(userService) {
     @PostMapping("{id}/join-with-code/{code}")
     fun joinWithCodeEndpoint(@PathVariable id: Int, @PathVariable code: String): ResponseEntity<Reader?> {
@@ -76,4 +78,7 @@ class TextSetController(
 
     @GetMapping("where-i-am-reader")
     fun setsIAmReaderEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByReader(user!!))
+
+    @GetMapping("summary")
+    fun summaryEndpoint(): ResponseEntity<List<SummaryService.SummaryObject>> = ok(summaryService.createSummaryFor(user!!))
 }

@@ -92,4 +92,6 @@ class TextService(
         val text = textDao.getByTextSetAndShown(textSet, LocalDate.now())
         return text?.text ?: pickDailyText(textSet)?.text
     }
+
+    fun getAllByUser(user: User): List<TextSet> = textSetDao.getAllByUser(user)
 }
