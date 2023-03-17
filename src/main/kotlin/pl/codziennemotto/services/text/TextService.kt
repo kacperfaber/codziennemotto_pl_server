@@ -82,4 +82,14 @@ class TextService(
     fun getAllByOwner(user: User): List<TextSet> = textSetDao.getAllByOwner(user)
 
     fun getAllByReader(user: User): List<TextSet> = textSetDao.getAllByReader(user)
+
+    fun pickDailyText(textSet: TextSet): Text? {
+        val text = textDao.findFirstByShownIsNullAndTextSetOrderByOrderAsc(textSet) ?: return null
+        return textDao.save(text.apply { shown = LocalDate.now() })
+    }
+
+    fun getDailyText(textSet: TextSet): String?  {
+        val text = textDao.getByTextSetAndShown(textSet, LocalDate.now())
+        return text?.text ?: pickDailyText(textSet)?.text
+    }
 }
