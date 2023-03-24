@@ -1,0 +1,453 @@
+openapi: 3.0.3
+info:
+  title: codziennemotto.pl REST API
+  description: codziennemotto.pl REST API
+  version: 1.0.0
+servers:
+  - url: 'https'
+paths:
+  /auth:
+    post:
+      operationId: pl.codziennemotto.controllers.authentication.AuthenticationController#authEndpoint
+      tags:
+        - Authentication
+      description: Authenticates user by 'login' and 'password' and produces access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthPayload"
+
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Bad request - invalid login credentials
+
+  /current:
+    get:
+      tags:
+        - Authentication
+      description: Get current User
+      operationId: pl.codziennemotto.controllers.authentication.AuthenticationController#currentEndpoint
+      responses:
+        '200':
+          description: User's authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+        '400':
+          description: bad request - No User's authenticated
+
+  /text-set/create-new:
+    description: Create new TextSet
+    post:
+      operationId: pl.codziennemotto.controllers.textset.TextSetController#createNewTextSetEndpoint
+      tags:
+        - TextSet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTextSetPayload'
+
+      responses:
+        '200':
+          description: TextSet successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TextSet'
+        '403':
+          description: Forbidden - no valid authentication
+
+  /text-set/{id}:
+    description: Get TextSet by ID
+    get:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+
+      description: You must be authenticated as TextSet's owner or Reader.
+      operationId: pl.codziennemotto.controllers.textset.TextSetController#textSetByIdEndpoint
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TextSet"
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - you're not owner or reader of target TextSet, or TextSet doesn't exist.
+
+  /text-set/{id}/create-join-link:
+    description: Creates Join Link
+    post:
+      tags:
+      - JoinLink
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinLink'
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not owner of the TextSet or it doesn't exist.
+
+  /text-set/{id}/readers:
+    description: Get TextSet's Readers
+    get:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reader"
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not owner of the TextSet or it doesn't exist.
+
+  /text-set/{id}/texts/all:
+    description: Get all TextSet`s text. Only for TextSet's owner
+    get:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Text"
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not owner of the TextSet or it doesn't exist.
+
+  /text-set/{id}/texts/past:
+    description: Get past TextSet`s text.
+    get:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Text"
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not reader or owner of the TextSet or it doesn't exist.
+
+  /text-set/{id}/add:
+    put:
+      responses:
+        '200':
+          description: Successfully created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Text"
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not owner of the TextSet or it doesn't exist
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddTextPayload"
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+
+
+  /text-set/{setId}/{textId}:
+    delete:
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: setId
+        - in: path
+          schema:
+            type: integer
+          name: textId
+      tags:
+        - TextSet
+      responses:
+        '204':
+          description: Successfully deleted.
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: You're not owner of the TextSet or it doesn't exist.
+  
+  /text-set/where-i-am-owner:
+    get:
+      description: 'Returns list of TextSet where authenticated user is owner'
+      tags:
+        - TextSet
+      responses: 
+        '200':
+          description: Successfully obtained
+          content: 
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: "#/components/schemas/TextSet"
+        '403':
+          description: Forbidden - no valid authentication
+          
+  /text-set/where-i-am-reader:
+    get:
+      description: 'Returns list of TextSet where authenticated user is reader'
+      tags:
+        - TextSet
+      responses: 
+        '200':
+          description: Successfully obtained
+          content: 
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: "#/components/schemas/TextSet"
+        '403':
+          description: Forbidden - no valid authentication
+          
+          
+  /summary: 
+    get:
+      description: Returns summary of all list's that authenticated user has access
+      tags:
+        - TextSet
+      responses:
+        '200': 
+          description: Successfully obtained
+          content: 
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: "#/components/schemas/SummaryObject"
+        '403': 
+          description: Forbidden - no valid authentication.
+
+  /server/profile:
+    description: "Get server profile"
+    get:
+      responses:
+        '200':
+          description: "Successfully performed"
+          content:
+
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerProfile"
+                
+                
+  /text-set/{id}/join-with-code/{code}:
+    post:
+      tags: 
+        - JoinLink
+        
+      parameters:
+        - in: path
+          schema:
+            type: string
+          name: code
+        - in: path
+          schema:
+            type: integer
+          name: id
+      
+      responses: 
+        '200':
+          description: Successfully joined to TextSet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Reader"
+        '403': 
+          description: Forbidden - no valid authentication.
+        '400': 
+          description: Bad request - no matching  JoinLink in database
+
+
+components:
+  schemas:
+    User:
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+
+    TextSet:
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        ownerId:
+          type: integer
+          nullable: true
+
+    Reader:
+      properties:
+        id:
+          type: integer
+        text_set_id:
+          type: integer
+          nullable: true
+        user_id:
+          type: integer
+
+    Text:
+      properties:
+        id:
+          type: integer
+        order:
+          type: integer
+        shown:
+          type: string
+          format: "yyyy-MM-dd"
+          nullable: true
+        text_set_id:
+          type: integer
+          nullable: true
+        text:
+          type: string
+
+    JoinLink:
+      type: object
+      title: "JoinLink"
+      properties:
+        id:
+          type: integer
+        text_set_id:
+          type: integer
+          nullable: true
+        activeUntil:
+          type: string
+          format: "yyyy-MM-dd"
+        code:
+          type: string
+
+    AuthPayload:
+      type: object
+      properties:
+        login:
+          type: string
+          description: User's login / email
+        password:
+          type: string
+          description: User's password
+
+    AuthResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the authenticated user
+        email:
+          type: string
+          description: Email address of the authenticated user
+        username:
+          type: string
+          description: Display name of the authenticated user
+        token:
+          type: string
+          description: JWT token for the authenticated user
+
+    CreateTextSetPayload:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+
+    AddTextPayload:
+      properties:
+        text:
+          type: string
+        date:
+          type: string
+          format: "yyyy-MM-dd"
+        order:
+          type: integer
+
+    ServerProfile:
+      type: object
+      properties:
+        profile:
+          type: string
+          
+          
+    SummaryObject:
+      type: object
+      properties:
+        textSet:
+          $ref: '#/components/schemas/TextSet'
+        text:
+          type: string
+      required:
+        - textSet
