@@ -14,6 +14,7 @@ import org.springframework.data.repository.findByIdOrNull
 import pl.codziennemotto.data.dao.UserDao
 import pl.codziennemotto.data.dto.User
 import testutils.UnitTest
+import java.util.*
 import kotlin.test.assertEquals
 
 @SpringBootTest(properties = ["spring.profiles.active=test"])
@@ -28,7 +29,7 @@ class UserServiceTest {
     @Test
     fun `getUser returns what userDao returned`() {
         val user = User()
-        `when`(userDao.findByIdOrNull(anyInt())).thenReturn(user)
+        `when`(userDao.findById(anyInt())).thenReturn(Optional.of(user))
         assertEquals(user, userService.getUser(1))
     }
 
