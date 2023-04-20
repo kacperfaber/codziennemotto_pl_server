@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 @SpringBootTest(properties = ["spring.profiles.active=test"])
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension::class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class TextSetControllerWebTest {
     @Autowired
     lateinit var mockMvc: MockMvc
@@ -330,9 +330,11 @@ class TextSetControllerWebTest {
         val before = textDao.findAll().count()
 
         mockMvc.delete("/text-set/0/0") { auth(1) }.andExpect {
-            val after = textDao.findAll().count()
-            assertEquals(before - 1, after)
+            status { isNoContent() }
         }
+
+        val after = textDao.findAll().count()
+        assertEquals(before - 1, after)
     }
 
     private fun addTextContent(text: String, date: LocalDate?, order: Int) =
