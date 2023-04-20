@@ -1,15 +1,12 @@
 package pl.codziennemotto.data.dto
 
+import BaseDto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
 @Table(name = "`user`")
-open class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open var id: Int? = null
-
+open class User : BaseDto() {
     open lateinit var email: String
 
     open lateinit var username: String

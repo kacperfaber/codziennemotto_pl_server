@@ -37,9 +37,9 @@ class UserServiceTest {
     @ValueSource(ints = [5, 11, 10, 15, 24, 25, 69, 4, 0])
 
     fun `getUser calls userDao with expected id`(id: Int) {
-        val user = User()
-        `when`(userDao.findByIdOrNull(anyInt())).thenReturn(user)
+        val user = Optional.of(User())
+        `when`(userDao.findById(anyInt())).thenReturn(user)
         userService.getUser(id)
-        verify(userDao).findByIdOrNull(eq(id))
+        verify(userDao).findById(eq(id))
     }
 }

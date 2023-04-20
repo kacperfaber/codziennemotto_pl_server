@@ -1,5 +1,6 @@
 package pl.codziennemotto.data.dto
 
+import BaseDto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
@@ -8,11 +9,7 @@ import java.time.LocalDate
 
 @Entity
 @Table(name = "text")
-open class Text {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open var id: Int? = null
-
+open class Text : BaseDto() {
     open lateinit var text: String
 
     open var date: LocalDate? = null

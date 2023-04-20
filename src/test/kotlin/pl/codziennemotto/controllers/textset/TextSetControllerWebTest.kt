@@ -398,7 +398,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     fun `addTextByIdEndpoint creates Text with expected date`() {
         val text = UUID.randomUUID().toString()
-        val date = LocalDate.of(5, 5, 2005)
+        val date = LocalDate.of(2005, 5, 5)
         mockMvc.put("/text-set/0/add") {
             auth(1)
             contentType = MediaType.APPLICATION_JSON

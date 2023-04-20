@@ -1,5 +1,6 @@
 package pl.codziennemotto.data.dto
 
+import BaseDto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
@@ -7,11 +8,7 @@ import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(name = "reader")
-open class Reader {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open var id: Int? = null
-
+open class Reader : BaseDto() {
     @JoinColumn(name = "text_set_id", referencedColumnName = "id")
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.NO_ACTION)

@@ -1,5 +1,6 @@
 package pl.codziennemotto.data.dto
 
+import BaseDto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
@@ -8,10 +9,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(name = "join_link")
-open class JoinLink {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open var id: Int? = null
+open class JoinLink : BaseDto() {
 
     @JoinColumn(name = "text_set_id")
     @ManyToOne(fetch = FetchType.LAZY)

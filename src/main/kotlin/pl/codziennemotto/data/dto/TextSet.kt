@@ -1,5 +1,6 @@
 package pl.codziennemotto.data.dto
 
+import BaseDto
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
@@ -7,11 +8,7 @@ import org.hibernate.annotations.OnDeleteAction
 
 @Entity
 @Table(name = "text_set")
-open class TextSet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    open var id: Int? = null
-
+open class TextSet : BaseDto() {
     open lateinit var title: String
 
     open lateinit var description: String
