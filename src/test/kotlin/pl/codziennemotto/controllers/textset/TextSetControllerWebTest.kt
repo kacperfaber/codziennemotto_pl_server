@@ -18,6 +18,7 @@ import testutils.IntegrationTest
 import testutils.WebLayerTest
 import testutils.auth
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -139,34 +140,34 @@ class TextSetControllerWebTest {
     @IntegrationTest
     fun `joinLinkEndpoint returns FORBIDDEN if not authorized`() {
         mockMvc.post("/text-set/0/create-join-link") { }
-            .andExpect {
-                status {
-                    isForbidden()
+                .andExpect {
+                    status {
+                        isForbidden()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `joinLinkEndpoint returns OK if authorized`() {
         mockMvc.post("/text-set/0/create-join-link") { auth(1) }
-            .andExpect {
-                status {
-                    isOk()
+                .andExpect {
+                    status {
+                        isOk()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `joinLinkEndpoint returns expected data`() {
         mockMvc.post("/text-set/0/create-join-link") { auth(1) }
-            .andExpect {
-                status {
-                    jsonPath("$.code", notNullValue())
-                    jsonPath("$.id", notNullValue())
+                .andExpect {
+                    status {
+                        jsonPath("$.code", notNullValue())
+                        jsonPath("$.id", notNullValue())
+                    }
                 }
-            }
     }
 
     @Test
@@ -175,127 +176,127 @@ class TextSetControllerWebTest {
         val before = joinLinkDao.findAll().filter { it.textSetId == 0 }.count()
 
         mockMvc.post("/text-set/0/create-join-link") { auth(1) }
-            .andExpect {
-                val after = joinLinkDao.findAll().filter { it.textSetId == 0 }.count()
-                assertTrue { after == before + 1 }
-            }
+                .andExpect {
+                    val after = joinLinkDao.findAll().filter { it.textSetId == 0 }.count()
+                    assertTrue { after == before + 1 }
+                }
     }
 
     @Test
     @IntegrationTest
     fun `joinLinkEndpoint returns badRequest if authorized user is not set owner`() {
         mockMvc.post("/text-set/0/create-join-link") { auth(2) }
-            .andExpect {
-                status {
-                    isBadRequest()
+                .andExpect {
+                    status {
+                        isBadRequest()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmOwnerEndpoint returns FORBIDDEN if unauthorized`() {
         mockMvc.get("/text-set/where-i-am-owner") { }
-            .andExpect {
-                status {
-                    isForbidden()
+                .andExpect {
+                    status {
+                        isForbidden()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmOwnerEndpoint returns OK if authorized`() {
         mockMvc.get("/text-set/where-i-am-owner") { auth(1) }
-            .andExpect {
-                status {
-                    isOk()
+                .andExpect {
+                    status {
+                        isOk()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmOwnerEndpoint returns expected data from database`() {
         mockMvc.get("/text-set/where-i-am-owner") { auth(1) }
-            .andExpect {
-                jsonPath("$[0].id", `is`(0))
-                jsonPath("$[0].title", `is`("HelloWorld!"))
-                jsonPath("$[0].description", `is`("This is the greatest set in the page."))
-            }
+                .andExpect {
+                    jsonPath("$[0].id", `is`(0))
+                    jsonPath("$[0].title", `is`("HelloWorld!"))
+                    jsonPath("$[0].description", `is`("This is the greatest set in the page."))
+                }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmOwnerEndpoint returns empty if user is not owner of any TextSet`() {
         mockMvc.get("/text-set/where-i-am-owner") { auth(2) }
-            .andExpect {
-                jsonPath("$.length()", `is`(0))
-            }
+                .andExpect {
+                    jsonPath("$.length()", `is`(0))
+                }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmOwnerEndpoint returns OK if user is not owner of any TextSet`() {
         mockMvc.get("/text-set/where-i-am-owner") { auth(2) }
-            .andExpect {
-                status {
-                    isOk()
+                .andExpect {
+                    status {
+                        isOk()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmReaderEndpoint returns FORBIDDEN if unauthorized`() {
         mockMvc.get("/text-set/where-i-am-reader") { }
-            .andExpect {
-                status {
-                    isForbidden()
+                .andExpect {
+                    status {
+                        isForbidden()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmReaderEndpoint returns OK if authorized`() {
         mockMvc.get("/text-set/where-i-am-reader") { auth(1) }
-            .andExpect {
-                status {
-                    isOk()
+                .andExpect {
+                    status {
+                        isOk()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmReaderEndpoint returns OK if authorized user is not reading TextSet`() {
         mockMvc.get("/text-set/where-i-am-reader") { auth(1) }
-            .andExpect {
-                status {
-                    isOk()
+                .andExpect {
+                    status {
+                        isOk()
+                    }
                 }
-            }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmReaderEndpoint returns empty list if authorized user is not reading TextSet`() {
         mockMvc.get("/text-set/where-i-am-reader") { auth(1) }
-            .andExpect {
-                jsonPath("$.length()", `is`(0))
-            }
+                .andExpect {
+                    jsonPath("$.length()", `is`(0))
+                }
     }
 
     @Test
     @IntegrationTest
     fun `setsIAmReaderEndpoint returns expected data from database`() {
         mockMvc.get("/text-set/where-i-am-reader") { auth(2) }
-            .andExpect {
-                jsonPath("$[0].id", `is`(0))
-                jsonPath("$[0].title", `is`("HelloWorld!"))
-                jsonPath("$[0].description", `is`("This is the greatest set in the page."))
-            }
+                .andExpect {
+                    jsonPath("$[0].id", `is`(0))
+                    jsonPath("$[0].title", `is`("HelloWorld!"))
+                    jsonPath("$[0].description", `is`("This is the greatest set in the page."))
+                }
     }
 
     @Test
@@ -337,8 +338,10 @@ class TextSetControllerWebTest {
         assertEquals(before - 1, after)
     }
 
+    private fun writeLocalDateJSON(date: LocalDate?) = if(date != null) "\"${date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}\"" else "null"
+
     private fun addTextContent(text: String, date: LocalDate?, order: Int) =
-        "{\"text\": \"$text\", \"date\":$date, \"order\": $order}"
+        "{\"text\": \"$text\", \"date\":${writeLocalDateJSON(date)}, \"order\": $order}"
 
     @Test
     @IntegrationTest
@@ -404,7 +407,7 @@ class TextSetControllerWebTest {
         mockMvc.put("/text-set/0/add") {
             auth(1)
             contentType = MediaType.APPLICATION_JSON
-            content = addTextContent(text, null, 0)
+            content = addTextContent(text, date, 0)
         }.andExpect {
             val t1 = textDao.findAll().firstOrNull { it.text == text }
             assertEquals(date, t1?.date)

@@ -11,7 +11,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @SpringBootTest(properties = ["spring.profiles.active=test"])
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class TextDaoTest {
     @Autowired
     lateinit var textDao: TextDao
@@ -21,6 +20,7 @@ class TextDaoTest {
 
     @Nested
     @IntegrationTest
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     inner class findFirstByShownIsNullAndTextSetOrderByOrderAsc {
         @Test
         fun `returns not null if null is not expected`() {

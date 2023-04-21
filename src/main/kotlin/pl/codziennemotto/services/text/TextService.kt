@@ -74,8 +74,8 @@ class TextService(
         textSetDao.save(generateTextSet(title, description, user))
 
     fun deleteText(setId: Int, textId: Int, authorizedUser: User): Boolean {
-        val text = textDao.getByIdAndTextSetIdAndTextSetOwner(textId, setId, authorizedUser) ?: return false
-        textDao.delete(text)
+        textDao.getByIdAndTextSetIdAndTextSetOwner(textId, setId, authorizedUser) ?: return false
+        textDao.deleteAllByIdInBatch(mutableListOf(textId))
         return true
     }
 
