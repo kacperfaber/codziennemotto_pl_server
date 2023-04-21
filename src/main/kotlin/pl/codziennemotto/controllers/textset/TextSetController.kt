@@ -19,10 +19,10 @@ import java.time.LocalDate
 @RequestMapping("text-set")
 @Authenticated
 class TextSetController(
-    userService: UserService,
-    private val textService: TextService,
-    private val joinLinkService: JoinLinkService,
-    private val summaryService: SummaryService
+        userService: UserService,
+        private val textService: TextService,
+        private val joinLinkService: JoinLinkService,
+        private val summaryService: SummaryService
 ) : ControllerBase(userService) {
     @PostMapping("{id}/join-with-code/{code}")
     fun joinWithCodeEndpoint(@PathVariable id: Int, @PathVariable code: String): ResponseEntity<Reader?> {
@@ -48,6 +48,7 @@ class TextSetController(
 
     class AddTextPayload {
         lateinit var text: String
+
         @JsonFormat(pattern = "yyyy-MM-dd")
         var date: LocalDate? = null
         var order: Int = 0
@@ -55,7 +56,7 @@ class TextSetController(
 
     @PutMapping("{id}/add")
     fun addTextByIdEndpoint(@PathVariable id: Int, @RequestBody payload: AddTextPayload): ResponseEntity<Text> =
-        of(textService.addText(id, user!!, payload.text, payload.date, payload.order))
+            of(textService.addText(id, user!!, payload.text, payload.date, payload.order))
 
     class CreateNewTextSetPayload {
         lateinit var title: String
@@ -64,14 +65,14 @@ class TextSetController(
 
     @PostMapping("/create-new")
     fun createNewTextSetEndpoint(@RequestBody payload: CreateNewTextSetPayload): ResponseEntity<TextSet> =
-        of(textService.createNewTextSet(user!!, payload.title, payload.description))
+            of(textService.createNewTextSet(user!!, payload.title, payload.description))
 
     @PostMapping("{id}/create-join-link")
     fun joinLinkEndpoint(@PathVariable id: Int): ResponseEntity<JoinLink> = of(joinLinkService.createJoinLink(id, user!!))
 
     @DeleteMapping("{setId}/{textId}")
     fun deleteTextByIdEndpoint(@PathVariable setId: Int, @PathVariable textId: Int): ResponseEntity<Boolean> =
-        ofBoolean(textService.deleteText(setId, textId, user!!))
+            ofBoolean(textService.deleteText(setId, textId, user!!))
 
     @GetMapping("where-i-am-owner")
     fun setsIAmOwnerEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByOwner(user!!))
@@ -81,4 +82,7 @@ class TextSetController(
 
     @GetMapping("summary")
     fun summaryEndpoint(): ResponseEntity<List<SummaryService.SummaryObject>> = ok(summaryService.createSummaryFor(user!!))
+
+    @GetMapping("{setId}/readers/include-users")
+    fun readersIncludeUsersEndpoint(@PathVariable setId: Int): ResponseEntity<Iterable<TextService.ReaderIncludeUser>> = of(textService.getReadersIncludeUsers(setId, user!!))
 }

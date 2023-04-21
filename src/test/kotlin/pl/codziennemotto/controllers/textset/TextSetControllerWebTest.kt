@@ -1,12 +1,16 @@
 package pl.codziennemotto.controllers.textset
 
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.notNullValue
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import org.assertj.core.util.Lists
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.data.rest.webmvc.json.JsonSchema
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
@@ -14,6 +18,7 @@ import org.springframework.test.web.servlet.*
 import pl.codziennemotto.data.dao.JoinLinkDao
 import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
+import pl.codziennemotto.services.text.TextService
 import testutils.IntegrationTest
 import testutils.WebLayerTest
 import testutils.auth
@@ -338,10 +343,10 @@ class TextSetControllerWebTest {
         assertEquals(before - 1, after)
     }
 
-    private fun writeLocalDateJSON(date: LocalDate?) = if(date != null) "\"${date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}\"" else "null"
+    private fun writeLocalDateJSON(date: LocalDate?) = if (date != null) "\"${date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))}\"" else "null"
 
     private fun addTextContent(text: String, date: LocalDate?, order: Int) =
-        "{\"text\": \"$text\", \"date\":${writeLocalDateJSON(date)}, \"order\": $order}"
+            "{\"text\": \"$text\", \"date\":${writeLocalDateJSON(date)}, \"order\": $order}"
 
     @Test
     @IntegrationTest
@@ -412,5 +417,23 @@ class TextSetControllerWebTest {
             val t1 = textDao.findAll().firstOrNull { it.text == text }
             assertEquals(date, t1?.date)
         }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `readersIncludeUserEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/0/readers/include-users") {}.andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `readersIncludeUserEndpoint returns BAD REQUEST if authenticated is another user`() {
+        mockMvc.get("/text-set/0/readers/include-users") { auth(3) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `readersIncludeUserEndpoint returns OK if valid data`() {
+        mockMvc.get("/text-set/0/readers/include-users") { auth(1) }.andExpect { status { isOk() } }
     }
 }

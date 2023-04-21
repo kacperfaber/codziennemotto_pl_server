@@ -326,6 +326,30 @@ paths:
         '400': 
           description: Bad request - no matching  JoinLink in database
 
+  /text-set/{id}/readers/include-users:
+    get:
+      tags:
+        - TextSet
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully fetch
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReaderIncludeUser"
+        '403':
+          description: Forbidden - no valid authentication.
+        '400':
+          description: bad request - no matching data corresponding to your authentication.
+
 
 components:
   schemas:
@@ -451,3 +475,12 @@ components:
           type: string
       required:
         - textSet
+    ReaderIncludeUser:
+      type: object
+      properties:
+        userName:
+          type: string
+        userId:
+          type: integer
+        reader:
+          $ref: "#/components/schemas/Reader"
