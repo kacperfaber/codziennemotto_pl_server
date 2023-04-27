@@ -105,8 +105,13 @@ class TextService(
 
     data class ReaderIncludeUser(val reader: Reader, val userName: String, val userId: Int)
 
-    fun getReadersIncludeUsers(textSetId: Int, authorizedUser: User): Iterable<ReaderIncludeUser>? {
-        val readers = getReadersOfTextSet(textSetId, authorizedUser) ?: return null
+    fun getReadersAsTextSetOwner(textSetId: Int, authorizedUser: User): Iterable<Reader>? {
+        val textSet = textSetDao.getByIdAndOwner(textSetId, authorizedUser) ?: return null
+        return textSet.readers
+    }
+
+    fun getReadersIncludeUsers(authorizedUser: User, textSetId: Int): Iterable<ReaderIncludeUser>? {
+        val readers = getReadersAsTextSetOwner(textSetId, authorizedUser) ?: return null
         return readers.map {
             val user = userService.getUser(it.userId!!)!!
             return@map ReaderIncludeUser(it, user.username, user.id)
