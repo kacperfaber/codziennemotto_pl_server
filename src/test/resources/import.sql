@@ -15,3 +15,14 @@ INSERT INTO text_set(id, owner_id, title, description) VALUES (1, 1, 'The better
 
 INSERT INTO text(id, text_set_id, text, _order_) VALUES (100, 1, 'Sample Value1', 0);
 INSERT INTO text(id, text_set_id, text, _order_) VALUES (101, 1, 'Sample Value2', 1);
+
+INSERT INTO `user`(id, email, username, password_hash) VALUES(10, 'test-owner@gmail.com', 'test-user', 'HelloWorld123');
+INSERT INTO `user`(id, email, username, password_hash) VALUES(11, 'test-reader@gmail.com', 'test-reader', 'HelloWorld123');
+
+INSERT INTO text_set(id, owner_id, title, description) VALUES (10, 10, 'test-user property!', 'Hello World!');
+
+INSERT INTO reader(id, user_id, text_set_id) VALUES(51, 10, 10);
+INSERT INTO reader(id, user_id, text_set_id) VALUES(50, 11, 10);
+
+INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (50, 10, 'Sample Value1', 0, CURRENT_DATE);
+INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (51, 10, 'Sample Value2', 1, NULL);

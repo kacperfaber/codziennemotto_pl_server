@@ -162,6 +162,30 @@ paths:
         '400':
           description: bad request - You're not owner of the TextSet or it doesn't exist.
 
+  /text-set/{id}/texts/all/visible:
+    description: Get all TextSet`s text where authorized user is allowed to see.
+    get:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+      responses:
+        '200':
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Text"
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not allowed to access the TextSet.
+
   /text-set/{id}/texts/past:
     description: Get past TextSet`s text.
     get:

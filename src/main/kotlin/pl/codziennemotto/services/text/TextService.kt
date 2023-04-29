@@ -53,8 +53,18 @@ class TextService(
             textSetDao.getReadersByIdAndUser(id, authorizedUser)
 
     fun getAllTexts(id: Int, authorizedUser: User) = textSetDao.getAllTextsByIdAndUser(id, authorizedUser)
+
+    private fun isTextSetOwner(textSet: TextSet, authorizedUser: User): Boolean {
+        return textSet.ownerId!! == authorizedUser.id
+    }
+
+    fun getAllVisibleTexts(id: Int, authorizedUser: User): List<Text>? {
+        val textSet = getTextSet(id, authorizedUser) ?: return null
+        return if (isTextSetOwner(textSet, authorizedUser)) getAllTexts(id, authorizedUser) else getPastTexts(id, authorizedUser)
+    }
+
     fun getPastTexts(id: Int, authorizedUser: User): List<Text> =
-            textSetDao.getPastTextsByIdAndUser(id, authorizedUser, LocalDateTime.now())
+            textSetDao.getPastTextsByIdAndUser(id, authorizedUser, LocalDate.now())
 
     private fun generateText(text: String, date: LocalDate?, order: Int, textSet: TextSet): Text = Text().apply {
         this.order = order

@@ -6,7 +6,7 @@ import pl.codziennemotto.data.dto.Reader
 import pl.codziennemotto.data.dto.Text
 import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.data.dto.User
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 interface TextSetDao : JpaRepository<TextSet, Int> {
     fun getByIdAndOwner(id: Int, owner: User): TextSet?
@@ -20,8 +20,8 @@ interface TextSetDao : JpaRepository<TextSet, Int> {
     @Query(value = "SELECT S.texts FROM TextSet S WHERE S.owner = :user AND S.id = :id")
     fun getAllTextsByIdAndUser(id: Int, user: User): MutableList<Text>
 
-    @Query(value = "SELECT S.texts FROM TextSet S LEFT JOIN S.texts T LEFT JOIN S.readers R WHERE S.id = :id AND (S.owner = :user OR R.user = :user) AND T.date <= :today")
-    fun getPastTextsByIdAndUser(id: Int, user: User, today: LocalDateTime): MutableList<Text>
+    @Query(value = "SELECT S.texts FROM TextSet S JOIN S.texts T LEFT JOIN S.readers R WHERE S.id = :id AND (S.owner = :user OR R.user = :user) AND (T.shown IS NOT NULL AND T.shown <= :now)")
+    fun getPastTextsByIdAndUser(id: Int, user: User, now: LocalDate): MutableList<Text>
 
     @Query(value = "SELECT S FROM TextSet S WHERE S.owner = :user")
     fun getAllByOwner(user: User): List<TextSet>

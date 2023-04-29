@@ -7,6 +7,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.isNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -436,4 +437,47 @@ class TextSetControllerWebTest {
     fun `readersIncludeUserEndpoint returns OK if valid data`() {
         mockMvc.get("/text-set/0/readers/include-users") { auth(1) }.andExpect { status { isOk() } }
     }
+
+    @IntegrationTest
+    @Test
+    fun `allVisibleTextsEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/10/texts/all/visible").andExpect { status { isForbidden() } }
+    }
+
+    @IntegrationTest
+    @Test
+    fun `allVisibleTextsEndpoint returns OK if authorized with access to TextSet`() {
+        mockMvc.get("/text-set/10/texts/all/visible") {auth(10)}.andExpect { status { isOk() } }
+    }
+
+    @IntegrationTest
+    @Test
+    fun `allVisibleTextsEndpoint returns BAD REQUEST if authorized without access to TextSet`() {
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(1)}.andExpect { status { isBadRequest() } }
+    }
+
+    @IntegrationTest
+    @Test
+    fun `allVisibleTextsEndpoint returns two records if authorized as owner`() {
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(10)}.andExpect {
+            jsonPath("$.length()", `is`(2))
+        }
+    }
+
+    @IntegrationTest
+    @Test
+    fun `allVisibleTextsEndpoint returns single record if authorized as reader`() {
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+            jsonPath("$.length()", `is`(1))
+        }
+    }
+
+    @IntegrationTest
+    @Test
+    fun `allVisibleTextsEndpoint returns only records with shown not null if authorized as reader`() {
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+            jsonPath("$.[*].shown", notNullValue())
+        }
+    }
+
 }

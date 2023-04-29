@@ -43,6 +43,9 @@ class TextSetController(
     @GetMapping("{id}/texts/all")
     fun textsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getAllTexts(id, user!!))
 
+    @GetMapping("{id}/texts/all/visible")
+    fun allVisibleTextsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getAllVisibleTexts(id, user!!))
+
     @GetMapping("{id}/texts/past")
     fun pastTextsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getPastTexts(id, user!!))
 
