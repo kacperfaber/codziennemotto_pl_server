@@ -12,6 +12,7 @@ open class User : BaseDto() {
     open lateinit var username: String
 
     @Column(name = "password_hash")
+    @JsonIgnore
     open lateinit var passwordHash: String
 
     @OneToMany(mappedBy = "user")

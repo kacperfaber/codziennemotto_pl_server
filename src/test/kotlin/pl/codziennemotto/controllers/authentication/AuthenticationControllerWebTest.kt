@@ -1,5 +1,7 @@
 package pl.codziennemotto.controllers.authentication
 
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.hasItem
 import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -147,6 +149,25 @@ class AuthenticationControllerWebTest {
             jsonPath("$.email", `is`(email))
             jsonPath("$.username", `is`(username))
             jsonPath("$.id", `is`(1))
+        }
+    }
+
+    @Test
+    fun `currentEndpoint returns no 'passwordHash' property`() {
+        val email = "kacperf1234@gmail.com"
+        val username = "kacperfaber"
+
+        `when`(tokenService.readToken(anyString())).thenReturn(AccessToken(1, email, username))
+
+        `when`(userService.getUser(anyInt())).thenReturn(User().apply {
+            this.id = 1
+            this.username = username
+            this.email = email
+            this.passwordHash = "Secret"
+        })
+
+        mockMvc.get("/current") {auth(1)}.andExpect {
+            jsonPath("$", Matchers.not(hasItem("passwordHash")))
         }
     }
 }
