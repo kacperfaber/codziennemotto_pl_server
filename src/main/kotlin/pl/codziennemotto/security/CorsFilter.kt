@@ -11,7 +11,8 @@ import jakarta.servlet.http.HttpServletResponse
 class CorsFilter : Filter {
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
         (response as? HttpServletResponse)?.addHeader("Access-Control-Allow-Origin", "*")
-        (response as? HttpServletResponse)?.addHeader("Access-Control-Allow-Headers", "*")
+        (response as? HttpServletResponse)?.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+        (response as? HttpServletResponse)?.addHeader("Access-Control-Allow-Headers", "*");
         chain?.doFilter(request, response)
     }
 }
