@@ -480,4 +480,43 @@ class TextSetControllerWebTest {
         }
     }
 
+    @IntegrationTest
+    @Test
+    fun `deleteTextSetByIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.delete("/text-set/10").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextSetByIdEndpoint returns BAD REQUEST if authorized is not set owner`() {
+        mockMvc.delete("/text-set/10") {auth(11)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextSetByIdEndpoint returns NO CONTENT if user authorized as a TextSet owner`() {
+        mockMvc.delete("/text-set/10"){auth(10)}.andExpect { status { isNoContent() } }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextSetByIdEndpoint makes TextSet table shorter if returned NO_CONTENT`() {
+        val was = textSetDao.findAll().count()
+
+        mockMvc.delete("/text-set/10"){auth(10)}.andExpect {
+            status { isNoContent() }
+            assertEquals(was - 1, textSetDao.findAll().count())
+        }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `deleteTextSetByIdEndpoint dont affect TextSet the same if returned NO_CONTENT`() {
+        val was = textSetDao.findAll().count()
+
+        mockMvc.delete("/text-set/10"){auth(11)}.andExpect {
+            status { isBadRequest() }
+            assertEquals(was, textSetDao.findAll().count())
+        }
+    }
 }

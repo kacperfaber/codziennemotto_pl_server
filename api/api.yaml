@@ -91,6 +91,22 @@ paths:
           description: Forbidden - no valid authentication
         '400':
           description: bad request - you're not owner or reader of target TextSet, or TextSet doesn't exist.
+    delete:
+      tags:
+        - TextSet
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Successfully deleted - no content
+        '403':
+          description: Forbidden - no valid authentication.
+        '400':
+          description: bad request - You're not owner of the TextSet, or TextSet doesn't exist.
 
   /text-set/{id}/create-join-link:
     description: Creates Join Link
