@@ -88,4 +88,6 @@ class TextSetController(
 
     @GetMapping("{setId}/readers/include-users")
     fun readersIncludeUsersEndpoint(@PathVariable setId: Int): ResponseEntity<Iterable<TextService.ReaderIncludeUser>> = of(textService.getReadersIncludeUsers(user!!, setId))
+
+    // develop
 }
