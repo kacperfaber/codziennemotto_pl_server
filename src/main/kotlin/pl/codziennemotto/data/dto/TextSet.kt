@@ -15,10 +15,12 @@ open class TextSet : BaseDto() {
 
     @OneToMany(mappedBy = "textSet")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     open lateinit var texts: MutableList<Text>
 
     @OneToMany(mappedBy = "textSet")
     @JsonIgnore
+    @OnDelete(action = OnDeleteAction.CASCADE)
     open lateinit var joinLinks: MutableList<JoinLink>
 
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
@@ -31,6 +33,7 @@ open class TextSet : BaseDto() {
     open var ownerId: Int? = null
 
     @OneToMany(mappedBy = "textSet")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     open lateinit var readers: MutableList<Reader>
 }
