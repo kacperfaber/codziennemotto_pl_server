@@ -130,6 +130,31 @@ paths:
         '400':
           description: bad request - You're not owner of the TextSet or it doesn't exist.
 
+  /text-set/{id}/join-links:
+    description: Gets all JoinLink's in TextSet [even expired]
+    post:
+      tags:
+        - JoinLink
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JoinLink'
+
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not owner of the TextSet or it doesn't exist.
+
   /text-set/{id}/readers:
     description: Get TextSet's Readers
     get:
@@ -418,10 +443,10 @@ components:
       properties:
         id:
           type: integer
-        text_set_id:
+        textSetId:
           type: integer
           nullable: true
-        user_id:
+        userId:
           type: integer
 
     Text:
@@ -434,7 +459,7 @@ components:
           type: string
           format: "yyyy-MM-dd"
           nullable: true
-        text_set_id:
+        textSetId:
           type: integer
           nullable: true
         text:
@@ -446,7 +471,7 @@ components:
       properties:
         id:
           type: integer
-        text_set_id:
+        textSetId:
           type: integer
           nullable: true
         activeUntil:

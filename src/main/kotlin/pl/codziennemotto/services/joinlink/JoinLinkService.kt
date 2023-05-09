@@ -26,4 +26,9 @@ class JoinLinkService(
         val textSet = textSetDao.getByIdAndOwner(id, user) ?: return null
         return joinLinkDao.save(generateJoinLink(textSet))
     }
+
+    fun getJoinLinks(textSetId: Int, authorizedUser: User): List<JoinLink>? {
+        val textSet = textSetDao.getByIdAndOwner(textSetId, authorizedUser)
+        return textSet?.joinLinks
+    }
 }
