@@ -127,4 +127,10 @@ class TextService(
             return@map ReaderIncludeUser(it, user.username, user.id)
         }
     }
+
+    fun deleteTextSet(authorizedUser: User, textSetId: Int): Boolean {
+        val textSet = textSetDao.getByIdAndOwner(textSetId, authorizedUser) ?: return false
+        textSetDao.deleteAllByIdInBatch(listOf(textSet.id))
+        return true
+    }
 }
