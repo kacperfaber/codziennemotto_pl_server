@@ -89,16 +89,11 @@ class TextSetController(
     @GetMapping("{setId}/readers/include-users")
     fun readersIncludeUsersEndpoint(@PathVariable setId: Int): ResponseEntity<Iterable<TextService.ReaderIncludeUser>> = of(textService.getReadersIncludeUsers(user!!, setId))
 
-    @GetMapping("{setId}/join-links")
-    fun joinLinksEndpoint(@PathVariable setId: Int): ResponseEntity<List<JoinLink>> = of(joinLinkService.getJoinLinks(setId, user!!))
-
-    @DeleteMapping("{setId}/readers/{readerId}")
-    fun deleteReaderByIdEndpoint(@PathVariable setId: Int, @PathVariable readerId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteReader(user!!, setId, readerId))
-
-    // develop
-
     @DeleteMapping("{setId}")
     fun deleteTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteTextSet(user!!, setId))
+
+    @GetMapping("{setId}/join-links")
+    fun joinLinksEndpoint(@PathVariable setId: Int): ResponseEntity<List<JoinLink>> = of(joinLinkService.getJoinLinks(setId, user!!))
 
     @DeleteMapping("{setId}/quit")
     fun quitTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.quit(user!!, setId))

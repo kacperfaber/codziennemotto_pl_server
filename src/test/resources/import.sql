@@ -42,9 +42,6 @@ INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(-52, -50, 'Z',
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (-50, -50, 'Sample Value1', 0, CURRENT_DATE);
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (-51, -50, 'Sample Value2', 1, NULL);
 
-
-
-
 INSERT INTO `user`(id, email, username, password_hash) VALUES (30, 'helloworld@java.com', 'helloWorld', 'HelloWorld123');
 INSERT INTO `user`(id, email, username, password_hash) VALUES (31, 'helloworld2@java.com', 'helloWorld2', 'HelloWorld123');
 INSERT INTO text_set(id, owner_id, title, description) VALUES (30, 30, 'No Texts List', 'no');

@@ -9,6 +9,4 @@ interface ReaderDao : JpaRepository<Reader, Int> {
     fun getByUserAndTextSet(user: User, textSet: TextSet): Reader?
 
     fun getByIdAndTextSet(id: Int, textSet: TextSet): Reader?
-
-    fun getByTextSetAndUser(textSet: TextSet, user: User): Reader?
 }
