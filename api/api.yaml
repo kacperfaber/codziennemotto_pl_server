@@ -101,7 +101,7 @@ paths:
           schema:
             type: string
       responses:
-        '201':
+        '204':
           description: Successfully deleted - no content
         '403':
           description: Forbidden - no valid authentication.
@@ -153,6 +153,30 @@ paths:
           description: Forbidden - no valid authentication
         '400':
           description: bad request - You're not owner of the TextSet or it doesn't exist.
+
+  /text-set/{id}/readers/{readerId}:
+    description: Deletes Reader by id.
+    delete:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+          description: TextSet's id
+        - in: path
+          schema:
+            type: integer
+          name: readerId
+          description: Reader's id
+      responses:
+        '204':
+          description: "Deleted successfully."
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not owner of the TextSet, or it [or Reader] doesn't exist.
 
   /text-set/{id}/texts/all:
     description: Get all TextSet`s text. Only for TextSet's owner

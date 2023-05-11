@@ -3,6 +3,7 @@ package pl.codziennemotto.services.text
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Component
 import pl.codziennemotto.data.dao.JoinLinkDao
+import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
 import pl.codziennemotto.data.dto.Reader
@@ -20,7 +21,8 @@ class TextService(
         private val joinLinkDao: JoinLinkDao,
         private val readerService: ReaderService,
         private val textDao: TextDao,
-        private val userService: UserService
+        private val userService: UserService,
+        private val readerDao: ReaderDao
 ) {
     enum class JoinWithCodeResult(val value: Int) {
         AlreadyJoined(0),
@@ -131,6 +133,13 @@ class TextService(
     fun deleteTextSet(authorizedUser: User, textSetId: Int): Boolean {
         val textSet = textSetDao.getByIdAndOwner(textSetId, authorizedUser) ?: return false
         textSetDao.deleteAllByIdInBatch(listOf(textSet.id))
+        return true
+    }
+
+    fun deleteReader(authorizedUser: User, textSetId: Int, readerId: Int): Boolean {
+        val textSet = textSetDao.getByIdAndOwner(textSetId, authorizedUser) ?: return false
+        readerDao.getByIdAndTextSet(readerId, textSet) ?: return false
+        readerDao.deleteAllByIdInBatch(listOf(readerId))
         return true
     }
 }

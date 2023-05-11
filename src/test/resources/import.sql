@@ -26,3 +26,11 @@ INSERT INTO reader(id, user_id, text_set_id) VALUES(50, 11, 10);
 
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (50, 10, 'Sample Value1', 0, CURRENT_DATE);
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (51, 10, 'Sample Value2', 1, NULL);
+
+
+
+
+INSERT INTO `user`(id, email, username, password_hash) VALUES (30, 'helloworld@java.com', 'helloWorld', 'HelloWorld123');
+INSERT INTO `user`(id, email, username, password_hash) VALUES (31, 'helloworld2@java.com', 'helloWorld2', 'HelloWorld123');
+INSERT INTO text_set(id, owner_id, title, description) VALUES (30, 30, 'No Texts List', 'no');
+INSERT INTO reader(id, user_id, text_set_id) VALUES (31, 31, 30);

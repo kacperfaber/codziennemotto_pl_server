@@ -17,8 +17,10 @@ import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.*
 import pl.codziennemotto.data.dao.JoinLinkDao
+import pl.codziennemotto.data.dao.ReaderDao
 import pl.codziennemotto.data.dao.TextDao
 import pl.codziennemotto.data.dao.TextSetDao
+import pl.codziennemotto.data.dto.TextSet
 import pl.codziennemotto.services.text.TextService
 import testutils.IntegrationTest
 import testutils.WebLayerTest
@@ -27,6 +29,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -48,6 +51,9 @@ class TextSetControllerWebTest {
 
     @Autowired
     lateinit var textDao: TextDao
+
+    @Autowired
+    lateinit var readerDao: ReaderDao
 
     @Test
     @IntegrationTest
@@ -447,19 +453,19 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns OK if authorized with access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible") {auth(10)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect { status { isOk() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns BAD REQUEST if authorized without access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(1)}.andExpect { status { isBadRequest() } }
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(1) }.andExpect { status { isBadRequest() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns two records if authorized as owner`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(10)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect {
             jsonPath("$.length()", `is`(2))
         }
     }
@@ -467,7 +473,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns single record if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
             jsonPath("$.length()", `is`(1))
         }
     }
@@ -475,7 +481,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns only records with shown not null if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
             jsonPath("$.[*].shown", notNullValue())
         }
     }
@@ -489,13 +495,13 @@ class TextSetControllerWebTest {
     @Test
     @IntegrationTest
     fun `deleteTextSetByIdEndpoint returns BAD REQUEST if authorized is not set owner`() {
-        mockMvc.delete("/text-set/10") {auth(11)}.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/10") { auth(11) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     @IntegrationTest
     fun `deleteTextSetByIdEndpoint returns NO CONTENT if user authorized as a TextSet owner`() {
-        mockMvc.delete("/text-set/10"){auth(10)}.andExpect { status { isNoContent() } }
+        mockMvc.delete("/text-set/10") { auth(10) }.andExpect { status { isNoContent() } }
     }
 
     @Test
@@ -503,7 +509,7 @@ class TextSetControllerWebTest {
     fun `deleteTextSetByIdEndpoint makes TextSet table shorter if returned NO_CONTENT`() {
         val was = textSetDao.findAll().count()
 
-        mockMvc.delete("/text-set/10"){auth(10)}.andExpect {
+        mockMvc.delete("/text-set/10") { auth(10) }.andExpect {
             status { isNoContent() }
             assertEquals(was - 1, textSetDao.findAll().count())
         }
@@ -514,9 +520,61 @@ class TextSetControllerWebTest {
     fun `deleteTextSetByIdEndpoint dont affect TextSet the same if returned NO_CONTENT`() {
         val was = textSetDao.findAll().count()
 
-        mockMvc.delete("/text-set/10"){auth(11)}.andExpect {
+        mockMvc.delete("/text-set/10") { auth(11) }.andExpect {
             status { isBadRequest() }
             assertEquals(was, textSetDao.findAll().count())
+        }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.delete("/text-set/30/readers/31").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if user is not owner of TextSet`() {
+        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if TextSet doesnt exist`() {
+        mockMvc.delete("/text-set/30009/readers/31") { auth(30) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns NO CONTENT if user is owner of TextSet and Reader exists`() {
+        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect { status { isNoContent() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if Reader doesnt exist`() {
+        mockMvc.delete("/text-set/30/readers/30005") { auth(30) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if Reader exist in another TextSet`() {
+        mockMvc.delete("/text-set/30/readers/1") { auth(30) }.andExpect { status { isBadRequest() } }
+    }
+
+    private fun hasReader(readerId: Int, textSetId: Int): Boolean {
+        return readerDao.getByIdAndTextSet(readerId, TextSet().apply { id = textSetId }) != null
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint deletes reader from db and returns NO CONTENT`() {
+        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
+            status { isNoContent() }
+            assertFalse {  hasReader(31, 30) }
+        }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint makes Reader table shorter and returns NO CONTENT`() {
+        val i0 = readerDao.findAll().count()
+        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
+            status { isNoContent() }
+            val i1 = readerDao.findAll().count()
+            assertEquals(i0 - 1, i1)
         }
     }
 }
