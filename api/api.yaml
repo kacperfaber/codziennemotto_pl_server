@@ -91,6 +91,22 @@ paths:
 
   /text-set/{id}:
     description: Get TextSet by ID
+    delete:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+
+      responses:
+        '204':
+          description: Deleted
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - you're not owner of target TextSet, or TextSet doesn't exist.
     get:
       tags:
         - TextSet
