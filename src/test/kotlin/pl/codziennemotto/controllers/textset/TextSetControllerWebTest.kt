@@ -527,101 +527,6 @@ class TextSetControllerWebTest {
     }
 
     @Test
-    fun `deleteReaderByIdEndpoint returns FORBIDDEN if unauthorized`() {
-        mockMvc.delete("/text-set/30/readers/31").andExpect { status { isForbidden() } }
-    }
-
-    @Test
-    fun `deleteReaderByIdEndpoint returns BAD REQUEST if user is not owner of TextSet`() {
-        mockMvc.delete("/text-set/30/readers/31") { auth(31) }.andExpect { status { isBadRequest() } }
-    }
-
-    @Test
-    fun `deleteReaderByIdEndpoint returns BAD REQUEST if TextSet doesnt exist`() {
-        mockMvc.delete("/text-set/30009/readers/31") { auth(30) }.andExpect { status { isBadRequest() } }
-    }
-
-    @Test
-    fun `deleteReaderByIdEndpoint returns NO CONTENT if user is owner of TextSet and Reader exists`() {
-        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect { status { isNoContent() } }
-    }
-
-    @Test
-    fun `deleteReaderByIdEndpoint returns BAD REQUEST if Reader doesnt exist`() {
-        mockMvc.delete("/text-set/30/readers/30005") { auth(30) }.andExpect { status { isBadRequest() } }
-    }
-
-    @Test
-    fun `deleteReaderByIdEndpoint returns BAD REQUEST if Reader exist in another TextSet`() {
-        mockMvc.delete("/text-set/30/readers/1") { auth(30) }.andExpect { status { isBadRequest() } }
-    }
-
-    private fun hasReader(readerId: Int, textSetId: Int): Boolean {
-        return readerDao.getByIdAndTextSet(readerId, TextSet().apply { id = textSetId }) != null
-    }
-
-    @Test
-    fun `deleteReaderByIdEndpoint deletes reader from db and returns NO CONTENT`() {
-        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
-            status { isNoContent() }
-            assertFalse {  hasReader(31, 30) }
-        }
-    }
-
-    @Test
-    fun `deleteReaderByIdEndpoint makes Reader table shorter and returns NO CONTENT`() {
-        val i0 = readerDao.findAll().count()
-        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
-            status { isNoContent() }
-            val i1 = readerDao.findAll().count()
-            assertEquals(i0 - 1, i1)
-        }
-    }
-
-    @Test
-    fun `quitTextSetByIdEndpoint returns FOBIDDEN if unauthorized`() {
-        mockMvc.delete("/text-set/30/quit").andExpect { status { isForbidden() } }
-    }
-
-    @Test
-    fun `quitTextSetByIdEndpoint returns BAD REQUEST if authorized as a TextSet owner`() {
-        mockMvc.delete("/text-set/30/quit") {auth(30)}.andExpect { status { isBadRequest() } }
-    }
-
-    @Test
-    fun `quitTextSetByIdEndpoint returns BAD REQUEST if TextSet doesn't exist`(){
-        mockMvc.delete("/text-set/300003/quit") {auth(30)}.andExpect { status { isBadRequest() } }
-    }
-
-    @Test
-    fun `quitTextSetByIdEndpoint returns BAD REQUEST if user is not a reader`() {
-        mockMvc.delete("/text-set/1/quit") {auth(30)}.andExpect { status { isBadRequest() } }
-    }
-
-    @Test
-    fun `quitTextSetByIdEndpoint returns NO CONTENT if TextSet exist and user is a Reader`() {
-        mockMvc.delete("/text-set/30/quit"){auth(31)}
-    }
-
-    @Test
-    fun `quitTextSetByIdEndpoint returns NO CONTENT and deletes Reader from TextSet`() {
-        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
-            status { isNoContent() }
-            assertFalse {hasReader(31, 30)}
-        }
-    }
-
-    @Test
-    fun `quitTextSetByIdEndpoint returns NO CONTENT and makes Reader table shorter`() {
-        val i0 = readerDao.findAll().count()
-        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
-            status { isNoContent() }
-            val i1 = readerDao.findAll().count()
-            assertEquals(i0 - 1, i1)
-        }
-    }
-
-    @Test
     @IntegrationTest
     fun `joinLinksEndpoint returns FORBIDDEN if unauthorized`() {
         mockMvc.get("/text-set/-50/join-links").andExpect { status { isForbidden() } }
@@ -688,6 +593,54 @@ class TextSetControllerWebTest {
     fun `quitTextSetByIdEndpoint returns NO CONTENT and makes Reader table shorter`() {
         val i0 = readerDao.findAll().count()
         mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
+            status { isNoContent() }
+            val i1 = readerDao.findAll().count()
+            assertEquals(i0 - 1, i1)
+        }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.delete("/text-set/30/readers/31").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if user is not owner of TextSet`() {
+        mockMvc.delete("/text-set/30/readers/31") { auth(31) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if TextSet doesnt exist`() {
+        mockMvc.delete("/text-set/30009/readers/31") { auth(30) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns NO CONTENT if user is owner of TextSet and Reader exists`() {
+        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect { status { isNoContent() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if Reader doesnt exist`() {
+        mockMvc.delete("/text-set/30/readers/30005") { auth(30) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint returns BAD REQUEST if Reader exist in another TextSet`() {
+        mockMvc.delete("/text-set/30/readers/1") { auth(30) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint deletes reader from db and returns NO CONTENT`() {
+        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
+            status { isNoContent() }
+            assertFalse {  hasReader(31, 30) }
+        }
+    }
+
+    @Test
+    fun `deleteReaderByIdEndpoint makes Reader table shorter and returns NO CONTENT`() {
+        val i0 = readerDao.findAll().count()
+        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
             status { isNoContent() }
             val i1 = readerDao.findAll().count()
             assertEquals(i0 - 1, i1)

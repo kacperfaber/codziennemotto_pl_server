@@ -34,7 +34,4 @@ interface TextSetDao : JpaRepository<TextSet, Int> {
 
     @Query(value = "SELECT S FROM TextSet S LEFT JOIN S.readers R WHERE S.owner = :user OR R.user = :user")
     fun getAllByUser(user: User): List<TextSet>
-
-    @Query(value = "SELECT S FROM TextSet S LEFT JOIN S.readers R WHERE (R.user = :user) AND S.id = :id")
-    fun getByIdAndReader(id: Int, user: User): TextSet?
 }

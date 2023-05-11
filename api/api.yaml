@@ -67,28 +67,6 @@ paths:
         '403':
           description: Forbidden - no valid authentication
 
-  /text-set/{id}/readers/{readerId}:
-    description: Deletes Reader
-    delete:
-      tags:
-        - TextSet
-      parameters:
-        - in: path
-          schema:
-            type: integer
-          name: id
-        - in: path
-          schema:
-            type: integer
-          name: readerId
-      responses:
-        '204':
-          description: 'Deleted'
-        '403':
-          description: Forbidden - no valid authentication
-        '400':
-          description: bad request - you're not owner of target TextSet, or TextSet [| or Reader] doesn't exist.
-
   /text-set/{id}:
     description: Get TextSet by ID
     delete:
@@ -151,6 +129,28 @@ paths:
           description: Forbidden - no valid authentication
         '400':
           description: bad request - You're not owner of the TextSet or it doesn't exist.
+
+  /text-set/{id}/readers/{readerId}:
+    description: Deletes Reader
+    delete:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+        - in: path
+          schema:
+            type: integer
+          name: readerId
+      responses:
+        '204':
+          description: 'Deleted'
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - you're not owner of target TextSet, or TextSet [| or Reader] doesn't exist.
 
   /text-set/{id}/join-links:
     description: Gets all JoinLink's in TextSet [even expired]
