@@ -40,6 +40,11 @@ class TextSetController(
     @GetMapping("{id}/readers")
     fun readersByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Reader>> = of(textService.getTextSetReaders(id, user!!))
 
+    @DeleteMapping("{textSetId}/readers/{readerId}")
+    fun deleteReaderByIdEndpoint(@PathVariable textSetId: Int, @PathVariable readerId: Int): ResponseEntity<Boolean> {
+        return ofBoolean(textService.deleteReader(user!!, textSetId, readerId))
+    }
+
     @GetMapping("{id}/texts/all")
     fun textsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getAllTexts(id, user!!))
 
@@ -89,9 +94,11 @@ class TextSetController(
     @GetMapping("{setId}/readers/include-users")
     fun readersIncludeUsersEndpoint(@PathVariable setId: Int): ResponseEntity<Iterable<TextService.ReaderIncludeUser>> = of(textService.getReadersIncludeUsers(user!!, setId))
 
+    // develop
+
     @DeleteMapping("{setId}")
     fun deleteTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteTextSet(user!!, setId))
 
-    @GetMapping("{setId}/join-links")
-    fun joinLinksEndpoint(@PathVariable setId: Int): ResponseEntity<List<JoinLink>> = of(joinLinkService.getJoinLinks(setId, user!!))
+    @DeleteMapping("{setId}/quit")
+    fun quitTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.quit(user!!, setId))
 }

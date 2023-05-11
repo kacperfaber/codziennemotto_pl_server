@@ -14,6 +14,9 @@ interface TextSetDao : JpaRepository<TextSet, Int> {
     @Query(value = "SELECT S FROM TextSet S LEFT JOIN S.readers R WHERE (R.user = :user OR S.owner = :user) AND S.id = :id")
     fun getByIdAndUserAllowed(id: Int, user: User): TextSet?
 
+    @Query(value = "SELECT S FROM TextSet S LEFT JOIN S.readers R WHERE (R.user = :user) AND S.id = :id")
+    fun getByIdAndReader(id: Int, user: User): TextSet?
+
     @Query(value = "SELECT S.readers FROM TextSet S WHERE S.owner = :user AND S.id = :id")
     fun getReadersByIdAndUser(id: Int, user: User): MutableList<Reader>
 

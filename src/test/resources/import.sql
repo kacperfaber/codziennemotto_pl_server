@@ -28,16 +28,9 @@ INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (50, 10, 'Sample 
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (51, 10, 'Sample Value2', 1, NULL);
 
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES(-50, 'link-creator@gmail.com', 'join-link-owner', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES(-51, 'link-user@gmail.com', 'linker', 'HelloWorld123');
 
-INSERT INTO text_set(id, owner_id, title, description) VALUES (-50, -50, 'test-user property!', 'Hello World!');
 
-INSERT INTO reader(id, user_id, text_set_id) VALUES(-50, 11, 10);
-
-INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(-50, -50, 'EFG', '2024-09-05')
-INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(-51, -50, 'ABC', '2025-09-05')
-INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(-52, -50, 'Z', '2021-09-05')
-
-INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (-50, -50, 'Sample Value1', 0, CURRENT_DATE);
-INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (-51, -50, 'Sample Value2', 1, NULL);
+INSERT INTO `user`(id, email, username, password_hash) VALUES (30, 'helloworld@java.com', 'helloWorld', 'HelloWorld123');
+INSERT INTO `user`(id, email, username, password_hash) VALUES (31, 'helloworld2@java.com', 'helloWorld2', 'HelloWorld123');
+INSERT INTO text_set(id, owner_id, title, description) VALUES (30, 30, 'No Texts List', 'no');
+INSERT INTO reader(id, user_id, text_set_id) VALUES (31, 31, 30);
