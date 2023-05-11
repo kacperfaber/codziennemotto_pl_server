@@ -453,19 +453,19 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns OK if authorized with access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/10/texts/all/visible") {auth(10)}.andExpect { status { isOk() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns BAD REQUEST if authorized without access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible") { auth(1) }.andExpect { status { isBadRequest() } }
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(1)}.andExpect { status { isBadRequest() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns two records if authorized as owner`() {
-        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(10)}.andExpect {
             jsonPath("$.length()", `is`(2))
         }
     }
@@ -473,7 +473,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns single record if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
             jsonPath("$.length()", `is`(1))
         }
     }
@@ -481,7 +481,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns only records with shown not null if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
             jsonPath("$.[*].shown", notNullValue())
         }
     }
@@ -618,6 +618,32 @@ class TextSetControllerWebTest {
             status { isNoContent() }
             val i1 = readerDao.findAll().count()
             assertEquals(i0 - 1, i1)
+        }
+    }
+
+    @Test
+    @IntegrationTest
+    fun `joinLinksEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/-50/join-links").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `joinLinksEndpoint returns BAD REQUEST if authorized user is not TextSet owner`() {
+        mockMvc.get("/text-set/-50/join-links") { auth(-51) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `joinLinksEndpoint returns OK if authorized as TextSet owner`() {
+        mockMvc.get("/text-set/-50/join-links") { auth(-50) }.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `joinLinksEndpoint returns expected items count when OK`() {
+        mockMvc.get("/text-set/-50/join-links") { auth(-50) }.andExpect {
+            status { isOk() }
+            content {
+                jsonPath("$.length()", equalTo(3))
+            }
         }
     }
 }

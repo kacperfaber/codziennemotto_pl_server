@@ -67,6 +67,28 @@ paths:
         '403':
           description: Forbidden - no valid authentication
 
+  /text-set/{id}/readers/{readerId}:
+    description: Deletes Reader
+    delete:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+        - in: path
+          schema:
+            type: integer
+          name: readerId
+      responses:
+        '204':
+          description: 'Deleted'
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - you're not owner of target TextSet, or TextSet [| or Reader] doesn't exist.
+
   /text-set/{id}:
     description: Get TextSet by ID
     get:
@@ -91,22 +113,6 @@ paths:
           description: Forbidden - no valid authentication
         '400':
           description: bad request - you're not owner or reader of target TextSet, or TextSet doesn't exist.
-    delete:
-      tags:
-        - TextSet
-
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: string
-      responses:
-        '204':
-          description: Successfully deleted - no content
-        '403':
-          description: Forbidden - no valid authentication.
-        '400':
-          description: bad request - You're not owner of the TextSet, or TextSet doesn't exist.
 
   /text-set/{id}/create-join-link:
     description: Creates Join Link
@@ -125,6 +131,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JoinLink'
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: bad request - You're not owner of the TextSet or it doesn't exist.
+
+  /text-set/{id}/join-links:
+    description: Gets all JoinLink's in TextSet [even expired]
+    post:
+      tags:
+        - JoinLink
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: id
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JoinLink'
+
         '403':
           description: Forbidden - no valid authentication
         '400':
@@ -173,30 +204,6 @@ paths:
           description: Forbidden - no valid authentication
         '400':
           description: bad request - You're not owner of the TextSet or it doesn't exist.
-
-  /text-set/{id}/readers/{readerId}:
-    description: Deletes Reader by id.
-    delete:
-      tags:
-        - TextSet
-      parameters:
-        - in: path
-          schema:
-            type: integer
-          name: id
-          description: TextSet's id
-        - in: path
-          schema:
-            type: integer
-          name: readerId
-          description: Reader's id
-      responses:
-        '204':
-          description: "Deleted successfully."
-        '403':
-          description: Forbidden - no valid authentication
-        '400':
-          description: bad request - You're not owner of the TextSet, or it [or Reader] doesn't exist.
 
   /text-set/{id}/texts/all:
     description: Get all TextSet`s text. Only for TextSet's owner
