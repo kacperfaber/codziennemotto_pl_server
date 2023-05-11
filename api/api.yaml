@@ -539,6 +539,7 @@ components:
           type: string
         date:
           type: string
+          nullable: true
           format: "yyyy-MM-dd"
         order:
           type: integer
