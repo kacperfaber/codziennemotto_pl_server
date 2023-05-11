@@ -130,6 +130,26 @@ paths:
         '400':
           description: bad request - You're not owner of the TextSet or it doesn't exist.
 
+  /text-set/{id}/quit:
+    description: Reader leaves the TextSet.
+    delete:
+      tags:
+        - TextSet
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          description: TextSet's id
+      responses:
+        '204':
+          description: 'Successfully deleted.'
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: Bad request - you're not a Reader of the TextSet
+
+
   /text-set/{id}/readers:
     description: Get TextSet's Readers
     get:

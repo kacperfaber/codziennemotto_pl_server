@@ -533,7 +533,7 @@ class TextSetControllerWebTest {
 
     @Test
     fun `deleteReaderByIdEndpoint returns BAD REQUEST if user is not owner of TextSet`() {
-        mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/30/readers/31") { auth(31) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
@@ -572,6 +572,49 @@ class TextSetControllerWebTest {
     fun `deleteReaderByIdEndpoint makes Reader table shorter and returns NO CONTENT`() {
         val i0 = readerDao.findAll().count()
         mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
+            status { isNoContent() }
+            val i1 = readerDao.findAll().count()
+            assertEquals(i0 - 1, i1)
+        }
+    }
+
+    @Test
+    fun `quitTextSetByIdEndpoint returns FOBIDDEN if unauthorized`() {
+        mockMvc.delete("/text-set/30/quit").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `quitTextSetByIdEndpoint returns BAD REQUEST if authorized as a TextSet owner`() {
+        mockMvc.delete("/text-set/30/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `quitTextSetByIdEndpoint returns BAD REQUEST if TextSet doesn't exist`(){
+        mockMvc.delete("/text-set/300003/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `quitTextSetByIdEndpoint returns BAD REQUEST if user is not a reader`() {
+        mockMvc.delete("/text-set/1/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `quitTextSetByIdEndpoint returns NO CONTENT if TextSet exist and user is a Reader`() {
+        mockMvc.delete("/text-set/30/quit"){auth(31)}
+    }
+
+    @Test
+    fun `quitTextSetByIdEndpoint returns NO CONTENT and deletes Reader from TextSet`() {
+        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
+            status { isNoContent() }
+            assertFalse {hasReader(31, 30)}
+        }
+    }
+
+    @Test
+    fun `quitTextSetByIdEndpoint returns NO CONTENT and makes Reader table shorter`() {
+        val i0 = readerDao.findAll().count()
+        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
             status { isNoContent() }
             val i1 = readerDao.findAll().count()
             assertEquals(i0 - 1, i1)
