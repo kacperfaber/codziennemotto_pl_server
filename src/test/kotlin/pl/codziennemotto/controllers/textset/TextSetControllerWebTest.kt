@@ -585,36 +585,36 @@ class TextSetControllerWebTest {
 
     @Test
     fun `quitTextSetByIdEndpoint returns BAD REQUEST if authorized as a TextSet owner`() {
-        mockMvc.delete("/text-set/30/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/30/quit") { auth(30) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
-    fun `quitTextSetByIdEndpoint returns BAD REQUEST if TextSet doesn't exist`(){
-        mockMvc.delete("/text-set/300003/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+    fun `quitTextSetByIdEndpoint returns BAD REQUEST if TextSet doesn't exist`() {
+        mockMvc.delete("/text-set/300003/quit") { auth(30) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `quitTextSetByIdEndpoint returns BAD REQUEST if user is not a reader`() {
-        mockMvc.delete("/text-set/1/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/1/quit") { auth(30) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `quitTextSetByIdEndpoint returns NO CONTENT if TextSet exist and user is a Reader`() {
-        mockMvc.delete("/text-set/30/quit"){auth(31)}
+        mockMvc.delete("/text-set/30/quit") { auth(31) }
     }
 
     @Test
     fun `quitTextSetByIdEndpoint returns NO CONTENT and deletes Reader from TextSet`() {
-        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
+        mockMvc.delete("/text-set/30/quit") { auth(31) }.andExpect {
             status { isNoContent() }
-            assertFalse {hasReader(31, 30)}
+            assertFalse { hasReader(31, 30) }
         }
     }
 
     @Test
     fun `quitTextSetByIdEndpoint returns NO CONTENT and makes Reader table shorter`() {
         val i0 = readerDao.findAll().count()
-        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
+        mockMvc.delete("/text-set/30/quit") { auth(31) }.andExpect {
             status { isNoContent() }
             val i1 = readerDao.findAll().count()
             assertEquals(i0 - 1, i1)
@@ -669,27 +669,27 @@ class TextSetControllerWebTest {
 
     @Test
     fun `textByIdEndpoint returns BAD REQUEST if user is reader and Text is future`() {
-        mockMvc.get("/text-set/60/61") {auth(61)}.andExpect { status { isBadRequest() } }
+        mockMvc.get("/text-set/60/61") { auth(61) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `textByIdEndpoint returns BAD REQUEST if user is owner and Text is future`() {
-        mockMvc.get("/text-set/60/61") {auth(60)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/60/61") { auth(60) }.andExpect { status { isOk() } }
     }
 
     @Test
     fun `textByIdEndpoint returns OK if user is reader and Text is past`() {
-        mockMvc.get("/text-set/60/60") {auth(61)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/60/60") { auth(61) }.andExpect { status { isOk() } }
     }
 
     @Test
     fun `textByIdEndpoint returns BAD REQUEST if user is owner and Text is past`() {
-        mockMvc.get("/text-set/60/60") {auth(60)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/60/60") { auth(60) }.andExpect { status { isOk() } }
     }
 
     @Test
     fun `textByIdEndpoint returns expected content when OK`() {
-        mockMvc.get("/text-set/60/61") {auth(60)}.andExpect {
+        mockMvc.get("/text-set/60/61") { auth(60) }.andExpect {
             status { isOk() }
 
             content {
@@ -697,6 +697,67 @@ class TextSetControllerWebTest {
                 jsonPath("$.textSetId", equalTo(60))
                 jsonPath("$.text", equalTo("Hello"))
             }
+        }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns FORBIDDEN if no authentication`() {
+        mockMvc.delete("/text-set/110/join-link/110").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if authenticated as a TextSet's Reader`() {
+        mockMvc.delete("/text-set/110/join-link/110") { auth(111) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if JoinLink doesn't exist`() {
+        mockMvc.delete("/text-set/110/join-link/-69"){auth(110)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if JoinLink exist but in another TextSet`() {
+        mockMvc.delete("/text-set/0/join-link/111"){auth(110)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns OK if user is TextSet owner and JoinLink exists`() {
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint makes JoinLink table shorter`() {
+        val b = joinLinkDao.findAll().count()
+
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+            status { isOk() }
+
+            val n = joinLinkDao.findAll().count()
+            assertTrue(b > n)
+        }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint makes JoinLink table shorter by 1`() {
+        val b = joinLinkDao.findAll().count()
+
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+            status { isOk() }
+
+            val n = joinLinkDao.findAll().count()
+            assertEquals(b - 1, n)
+        }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint deletes JoinLink from database`() {
+        val id = 111
+        assertTrue(joinLinkDao.findAll().any {it.id == id})
+
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+            status { isOk() }
+
+            assertFalse(joinLinkDao.findAll().any {it.id == id})
         }
     }
 }
