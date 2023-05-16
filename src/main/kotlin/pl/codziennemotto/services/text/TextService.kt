@@ -149,4 +149,9 @@ class TextService(
         readerDao.deleteAllByIdInBatch(listOf(reader.id))
         return true
     }
+
+    fun getTextByIdAndSetId(authorizedUser: User, textId: Int, setId: Int): Text? {
+        val texts = getAllVisibleTexts(setId, authorizedUser) ?: return null
+        return texts.firstOrNull {it.id == textId}
+    }
 }

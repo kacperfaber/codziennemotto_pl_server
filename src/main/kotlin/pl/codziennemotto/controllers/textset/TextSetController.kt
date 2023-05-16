@@ -102,4 +102,7 @@ class TextSetController(
 
     @DeleteMapping("{setId}/quit")
     fun quitTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.quit(user!!, setId))
+
+    @GetMapping("{setId}/{textId}")
+    fun textByIdEndpoint(@PathVariable textId: Int, @PathVariable setId: Int): ResponseEntity<Text> = of(textService.getTextByIdAndSetId(user!!, textId, setId))
 }
