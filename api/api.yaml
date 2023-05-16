@@ -321,6 +321,29 @@ paths:
 
 
   /text-set/{setId}/{textId}:
+    get:
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: setId
+        - in: path
+          schema:
+            type: integer
+          name: textId
+      tags:
+        - TextSet
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Text"
+          description: Success
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: Something wrong, target Text must be accessible for you [If you're reader, Text must be past]
     delete:
       parameters:
         - in: path
