@@ -453,19 +453,19 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns OK if authorized with access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible") {auth(10)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect { status { isOk() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns BAD REQUEST if authorized without access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(1)}.andExpect { status { isBadRequest() } }
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(1) }.andExpect { status { isBadRequest() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns two records if authorized as owner`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(10)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect {
             jsonPath("$.length()", `is`(2))
         }
     }
@@ -473,7 +473,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns single record if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
             jsonPath("$.length()", `is`(1))
         }
     }
@@ -481,7 +481,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns only records with shown not null if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
             jsonPath("$.[*].shown", notNullValue())
         }
     }
@@ -559,22 +559,22 @@ class TextSetControllerWebTest {
 
     @Test
     fun `quitTextSetByIdEndpoint returns BAD REQUEST if authorized as a TextSet owner`() {
-        mockMvc.delete("/text-set/30/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/30/quit") { auth(30) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
-    fun `quitTextSetByIdEndpoint returns BAD REQUEST if TextSet doesn't exist`(){
-        mockMvc.delete("/text-set/300003/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+    fun `quitTextSetByIdEndpoint returns BAD REQUEST if TextSet doesn't exist`() {
+        mockMvc.delete("/text-set/300003/quit") { auth(30) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `quitTextSetByIdEndpoint returns BAD REQUEST if user is not a reader`() {
-        mockMvc.delete("/text-set/1/quit") {auth(30)}.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/1/quit") { auth(30) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `quitTextSetByIdEndpoint returns NO CONTENT if TextSet exist and user is a Reader`() {
-        mockMvc.delete("/text-set/30/quit"){auth(31)}
+        mockMvc.delete("/text-set/30/quit") { auth(31) }
     }
 
     private fun hasReader(readerId: Int, textSetId: Int): Boolean {
@@ -583,16 +583,16 @@ class TextSetControllerWebTest {
 
     @Test
     fun `quitTextSetByIdEndpoint returns NO CONTENT and deletes Reader from TextSet`() {
-        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
+        mockMvc.delete("/text-set/30/quit") { auth(31) }.andExpect {
             status { isNoContent() }
-            assertFalse {hasReader(31, 30)}
+            assertFalse { hasReader(31, 30) }
         }
     }
 
     @Test
     fun `quitTextSetByIdEndpoint returns NO CONTENT and makes Reader table shorter`() {
         val i0 = readerDao.findAll().count()
-        mockMvc.delete("/text-set/30/quit") {auth(31)}.andExpect {
+        mockMvc.delete("/text-set/30/quit") { auth(31) }.andExpect {
             status { isNoContent() }
             val i1 = readerDao.findAll().count()
             assertEquals(i0 - 1, i1)
@@ -633,7 +633,7 @@ class TextSetControllerWebTest {
     fun `deleteReaderByIdEndpoint deletes reader from db and returns NO CONTENT`() {
         mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
             status { isNoContent() }
-            assertFalse {  hasReader(31, 30) }
+            assertFalse { hasReader(31, 30) }
         }
     }
 
@@ -712,24 +712,24 @@ class TextSetControllerWebTest {
 
     @Test
     fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if JoinLink doesn't exist`() {
-        mockMvc.delete("/text-set/110/join-link/-69"){auth(110)}.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/110/join-link/-69") { auth(110) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if JoinLink exist but in another TextSet`() {
-        mockMvc.delete("/text-set/0/join-link/111"){auth(110)}.andExpect { status { isBadRequest() } }
+        mockMvc.delete("/text-set/0/join-link/111") { auth(110) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `deleteJoinLinkByIdEndpoint returns OK if user is TextSet owner and JoinLink exists`() {
-        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect { status { isNoContent() } }
+        mockMvc.delete("/text-set/110/join-link/111") { auth(110) }.andExpect { status { isNoContent() } }
     }
 
     @Test
     fun `deleteJoinLinkByIdEndpoint makes JoinLink table shorter`() {
         val b = joinLinkDao.findAll().count()
 
-        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+        mockMvc.delete("/text-set/110/join-link/111") { auth(110) }.andExpect {
             status { isNoContent() }
 
             val n = joinLinkDao.findAll().count()
@@ -741,7 +741,7 @@ class TextSetControllerWebTest {
     fun `deleteJoinLinkByIdEndpoint makes JoinLink table shorter by 1`() {
         val b = joinLinkDao.findAll().count()
 
-        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+        mockMvc.delete("/text-set/110/join-link/111") { auth(110) }.andExpect {
             status { isNoContent() }
 
             val n = joinLinkDao.findAll().count()
@@ -752,12 +752,71 @@ class TextSetControllerWebTest {
     @Test
     fun `deleteJoinLinkByIdEndpoint deletes JoinLink from database`() {
         val id = 111
-        assertTrue(joinLinkDao.findAll().any {it.id == id})
+        assertTrue(joinLinkDao.findAll().any { it.id == id })
 
-        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+        mockMvc.delete("/text-set/110/join-link/111") { auth(110) }.andExpect {
             status { isNoContent() }
 
-            assertFalse(joinLinkDao.findAll().any {it.id == id})
+            assertFalse(joinLinkDao.findAll().any { it.id == id })
+        }
+    }
+
+    @Test
+    fun `textByJustIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/text/by-id/1120").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `textByJustIdEndpoint returns BAD REQUEST if authorized user is not permited to see this data`() {
+        mockMvc.get("/text-set/text/by-id/1120"){auth(1122)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByJustIdEndpoint returns BAD REQUEST if authorized user is reader and Text is future`() {
+        mockMvc.get("/text-set/text/by-id/1120"){auth(1121)}.andExpect { status { isBadRequest() } }
+    }
+
+
+    @Test
+    fun `textByJustIdEndpoint returns OK if authorized user is reader and Text is past`() {
+        mockMvc.get("/text-set/text/by-id/1121"){auth(1121)}.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByJustIdEndpoint returns OK if authorized is owner and Text is past`() {
+        mockMvc.get("/text-set/text/by-id/1121"){auth(1120)}.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByJustIdEndpoint returns OK if authorized is owner and Text is future`() {
+        mockMvc.get("/text-set/text/by-id/1120"){auth(1120)}.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByJustIdEndpoint returns expected Text data - scenario 1`() {
+        mockMvc.get("/text-set/text/by-id/1120"){auth(1120)}.andExpect {
+            status { isOk() }
+
+            content {
+                jsonPath("$.text", equalTo("Hello"))
+                jsonPath("$.textSetId", equalTo(1120))
+                jsonPath("$.id", equalTo(1120))
+                jsonPath("$.shown", equalTo(null))
+            }
+        }
+    }
+
+    @Test
+    fun `textByJustIdEndpoint returns expected Text data - scenario 2`() {
+        mockMvc.get("/text-set/text/by-id/1121"){auth(1120)}.andExpect {
+            status { isOk() }
+
+            content {
+                jsonPath("$.text", equalTo("World"))
+                jsonPath("$.textSetId", equalTo(1120))
+                jsonPath("$.id", equalTo(1121))
+                jsonPath("$.shown", equalTo("2020-03-12"))
+            }
         }
     }
 }

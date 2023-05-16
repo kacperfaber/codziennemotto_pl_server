@@ -12,4 +12,7 @@ interface TextDao : JpaRepository<Text, Int> {
     fun getByTextSetAndShown(textSet: TextSet, shown: LocalDate): Text?
     @Query("SELECT t FROM Text t WHERE t.shown IS NULL AND t.textSet = :textSet ORDER BY t.order ASC LIMIT 1")
     fun findFirstByShownIsNullAndTextSetOrderByOrderAsc(textSet: TextSet): Text?
+
+    @Query("SELECT T FROM Text T WHERE T.id = :id ORDER BY T.id LIMIT 1")
+    fun getTextById(id: Int): Text?
 }

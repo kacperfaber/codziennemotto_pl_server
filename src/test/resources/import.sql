@@ -68,3 +68,13 @@ INSERT INTO reader(id, user_id, text_set_id) VALUES (110, 111, 110);
 INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(110, 110, 'abc', '2100-05-05');
 INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(111, 110, 'abc', '2100-05-05');
 INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(112, 110, 'abc', '2100-05-05');
+
+
+
+INSERT INTO `user`(id, email, username, password_hash) VALUES (1120, 'test-id-120@gmail.com', 'test-id-120', 'HelloWorld123');
+INSERT INTO `user`(id, email, username, password_hash) VALUES (1121, 'test-id-121@gmail.com', 'test-id-121', 'HelloWorld123');
+INSERT INTO `user`(id, email, username, password_hash) VALUES (1122, 'test-id-122@gmail.com', 'test-id-122', 'HelloWorld123');
+INSERT INTO text_set(id, owner_id, title, description) VALUES(1120, 1120, '', '');
+INSERT INTO text(id, text_set_id, _order_, shown, text) VALUES (1120, 1120, 0, NULL, 'Hello');
+INSERT INTO text(id, text_set_id, _order_, shown, text) VALUES (1121, 1120, 0, '2020-03-12', 'World');
+INSERT INTO reader(id, user_id, text_set_id) VALUES (1120, 1121, 1120);

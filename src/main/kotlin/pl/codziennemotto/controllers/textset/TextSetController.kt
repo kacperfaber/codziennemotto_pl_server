@@ -107,4 +107,7 @@ class TextSetController(
 
     @DeleteMapping("{setId}/readers/{readerId}")
     fun deleteReaderByIdEndpoint(@PathVariable setId: Int, @PathVariable readerId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteReader(user!!, setId, readerId))
+
+    @GetMapping("/text/by-id/{textId}")
+    fun textByJustIdEndpoint(@PathVariable textId: Int): ResponseEntity<Text> = of(textService.getTextById(user!!, textId))
 }

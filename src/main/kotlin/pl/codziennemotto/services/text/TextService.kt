@@ -60,6 +60,10 @@ class TextService(
         return textSet.ownerId!! == authorizedUser.id
     }
 
+    private fun isTextSetReader(textSet: TextSet, authorizedUser: User): Boolean {
+        return textSet.readers.any {it.userId == authorizedUser.id}
+    }
+
     fun getAllVisibleTexts(id: Int, authorizedUser: User): List<Text>? {
         val textSet = getTextSet(id, authorizedUser) ?: return null
         return if (isTextSetOwner(textSet, authorizedUser)) getAllTexts(id, authorizedUser) else getPastTexts(id, authorizedUser)
@@ -152,5 +156,18 @@ class TextService(
         readerDao.getByIdAndTextSet(readerId, textSet) ?: return false
         readerDao.deleteAllByIdInBatch(listOf(readerId))
         return true
+    }
+
+    fun getTextById(authorizedUser: User, textId: Int): Text? {
+        val text = textDao.getTextById(textId) ?: return null
+        if (isTextSetReader(text.textSet, authorizedUser) && text.shown != null) {
+            return text
+        }
+
+        if (isTextSetOwner(text.textSet, authorizedUser)){
+            return text
+        }
+
+        return null
     }
 }

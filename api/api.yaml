@@ -344,6 +344,29 @@ paths:
           name: id
 
 
+  /text-set/text/by-id/{textId}:
+    get:
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: textId
+          description: Text's ID
+      tags:
+        - TextSet
+      responses:
+        '200':
+          description: Successfully fetched
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Text"
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: You're not allowed to see this Text.
+
+
   /text-set/{setId}/{textId}:
     get:
       parameters:
