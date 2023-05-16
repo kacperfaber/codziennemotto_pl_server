@@ -105,4 +105,8 @@ class TextSetController(
 
     @GetMapping("{setId}/{textId}")
     fun textByIdEndpoint(@PathVariable textId: Int, @PathVariable setId: Int): ResponseEntity<Text> = of(textService.getTextByIdAndSetId(user!!, textId, setId))
+
+    @DeleteMapping("{setId}/join-link/{joinLinkId}")
+    fun deleteJoinLinkByIdEndpoint(@PathVariable setId: Int, @PathVariable joinLinkId: Int): ResponseEntity<Boolean> = ofBoolean(joinLinkService.deleteJoinLink(user!!, setId, joinLinkId))
+
 }

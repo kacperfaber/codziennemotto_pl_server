@@ -31,4 +31,11 @@ class JoinLinkService(
         val textSet = textSetDao.getByIdAndOwner(textSetId, authorizedUser)
         return textSet?.joinLinks
     }
+
+    fun deleteJoinLink(user: User, textSetId: Int, joinLinkId: Int): Boolean {
+        val textSet = textSetDao.getByIdAndOwner(textSetId, user) ?: return false
+        joinLinkDao.getByTextSetAndId(textSet, joinLinkId) ?: return false
+        joinLinkDao.deleteAllByIdInBatch(listOf(joinLinkId))
+        return true
+    }
 }
