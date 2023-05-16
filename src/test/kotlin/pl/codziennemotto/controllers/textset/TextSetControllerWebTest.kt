@@ -722,7 +722,7 @@ class TextSetControllerWebTest {
 
     @Test
     fun `deleteJoinLinkByIdEndpoint returns OK if user is TextSet owner and JoinLink exists`() {
-        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect { status { isOk() } }
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect { status { isNoContent() } }
     }
 
     @Test
@@ -730,7 +730,7 @@ class TextSetControllerWebTest {
         val b = joinLinkDao.findAll().count()
 
         mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
-            status { isOk() }
+            status { isNoContent() }
 
             val n = joinLinkDao.findAll().count()
             assertTrue(b > n)
@@ -742,7 +742,7 @@ class TextSetControllerWebTest {
         val b = joinLinkDao.findAll().count()
 
         mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
-            status { isOk() }
+            status { isNoContent() }
 
             val n = joinLinkDao.findAll().count()
             assertEquals(b - 1, n)
@@ -755,7 +755,7 @@ class TextSetControllerWebTest {
         assertTrue(joinLinkDao.findAll().any {it.id == id})
 
         mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
-            status { isOk() }
+            status { isNoContent() }
 
             assertFalse(joinLinkDao.findAll().any {it.id == id})
         }
