@@ -453,19 +453,19 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns OK if authorized with access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible") {auth(10)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect { status { isOk() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns BAD REQUEST if authorized without access to TextSet`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(1)}.andExpect { status { isBadRequest() } }
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(1) }.andExpect { status { isBadRequest() } }
     }
 
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns two records if authorized as owner`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(10)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(10) }.andExpect {
             jsonPath("$.length()", `is`(2))
         }
     }
@@ -473,7 +473,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns single record if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
             jsonPath("$.length()", `is`(1))
         }
     }
@@ -481,7 +481,7 @@ class TextSetControllerWebTest {
     @IntegrationTest
     @Test
     fun `allVisibleTextsEndpoint returns only records with shown not null if authorized as reader`() {
-        mockMvc.get("/text-set/10/texts/all/visible"){auth(11)}.andExpect {
+        mockMvc.get("/text-set/10/texts/all/visible") { auth(11) }.andExpect {
             jsonPath("$.[*].shown", notNullValue())
         }
     }
@@ -564,7 +564,7 @@ class TextSetControllerWebTest {
     fun `deleteReaderByIdEndpoint deletes reader from db and returns NO CONTENT`() {
         mockMvc.delete("/text-set/30/readers/31") { auth(30) }.andExpect {
             status { isNoContent() }
-            assertFalse {  hasReader(31, 30) }
+            assertFalse { hasReader(31, 30) }
         }
     }
 
@@ -643,6 +643,59 @@ class TextSetControllerWebTest {
             status { isOk() }
             content {
                 jsonPath("$.length()", equalTo(3))
+            }
+        }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/60/60").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if authorized but TextSet doesn't exist`() {
+        mockMvc.get("/text-set/5025/60") { auth(60) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if authorized but Text doesn't exist`() {
+        mockMvc.get("/text-set/60/5025") { auth(60) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if authorized user is not allowed to see TextSet`() {
+        mockMvc.get("/text-set/60/-5025") { auth(1) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if user is reader and Text is future`() {
+        mockMvc.get("/text-set/60/61") {auth(61)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if user is owner and Text is future`() {
+        mockMvc.get("/text-set/60/61") {auth(60)}.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns OK if user is reader and Text is past`() {
+        mockMvc.get("/text-set/60/60") {auth(61)}.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if user is owner and Text is past`() {
+        mockMvc.get("/text-set/60/60") {auth(60)}.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns expected content when OK`() {
+        mockMvc.get("/text-set/60/61") {auth(60)}.andExpect {
+            status { isOk() }
+
+            content {
+                jsonPath("$.id", equalTo(61))
+                jsonPath("$.textSetId", equalTo(60))
+                jsonPath("$.text", equalTo("Hello"))
             }
         }
     }
