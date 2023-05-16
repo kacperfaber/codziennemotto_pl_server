@@ -135,12 +135,16 @@ class TextService(
         textSetDao.deleteAllByIdInBatch(listOf(textSet.id))
         return true
     }
-
     fun quit(authorizedUser: User, textSetId: Int): Boolean {
         val textSet = textSetDao.getByIdAndReader(textSetId, authorizedUser) ?: return false
         val reader = readerDao.getByUserAndTextSet(authorizedUser, textSet) ?: return false
         readerDao.deleteAllByIdInBatch(listOf(reader.id))
         return true
+    }
+
+    fun getTextByIdAndSetId(authorizedUser: User, textId: Int, setId: Int): Text? {
+        val texts = getAllVisibleTexts(setId, authorizedUser) ?: return null
+        return texts.firstOrNull {it.id == textId}
     }
 
     fun deleteReader(authorizedUser: User, textSetId: Int, readerId: Int): Boolean {

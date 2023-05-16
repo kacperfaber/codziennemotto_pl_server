@@ -45,6 +45,30 @@ paths:
         '400':
           description: bad request - No User's authenticated
 
+  /text-set/{setId}/join-link/{joinLinkId}:
+    delete:
+      description: Delete JoinLink.
+      parameters:
+        - in: path
+          schema:
+            type: integer
+            description: TextSet's ID
+          name: setId
+        - in: path
+          schema:
+            type: integer
+          name: joinLinkId
+          description: JoinLink's ID
+      tags:
+        - JoinLink
+      responses:
+        '204':
+          description: Deleted JoinLink
+        '403':
+          description: Forbidden - no valid authentication.
+        '400':
+          description: Bad Request - You're not owner of TextSet's, or JoinLink is not exist.
+
   /text-set/create-new:
     description: Create new TextSet
     post:
@@ -321,6 +345,29 @@ paths:
 
 
   /text-set/{setId}/{textId}:
+    get:
+      parameters:
+        - in: path
+          schema:
+            type: integer
+          name: setId
+        - in: path
+          schema:
+            type: integer
+          name: textId
+      tags:
+        - TextSet
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Text"
+          description: Success
+        '403':
+          description: Forbidden - no valid authentication
+        '400':
+          description: Something wrong, target Text must be accessible for you [If you're reader, Text must be past]
     delete:
       parameters:
         - in: path

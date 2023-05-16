@@ -646,4 +646,118 @@ class TextSetControllerWebTest {
             assertEquals(i0 - 1, i1)
         }
     }
+
+    @Test
+    fun `textByIdEndpoint returns FORBIDDEN if unauthorized`() {
+        mockMvc.get("/text-set/60/60").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if authorized but TextSet doesn't exist`() {
+        mockMvc.get("/text-set/5025/60") { auth(60) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if authorized but Text doesn't exist`() {
+        mockMvc.get("/text-set/60/5025") { auth(60) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if authorized user is not allowed to see TextSet`() {
+        mockMvc.get("/text-set/60/-5025") { auth(1) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if user is reader and Text is future`() {
+        mockMvc.get("/text-set/60/61") { auth(61) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if user is owner and Text is future`() {
+        mockMvc.get("/text-set/60/61") { auth(60) }.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns OK if user is reader and Text is past`() {
+        mockMvc.get("/text-set/60/60") { auth(61) }.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns BAD REQUEST if user is owner and Text is past`() {
+        mockMvc.get("/text-set/60/60") { auth(60) }.andExpect { status { isOk() } }
+    }
+
+    @Test
+    fun `textByIdEndpoint returns expected content when OK`() {
+        mockMvc.get("/text-set/60/61") { auth(60) }.andExpect {
+            status { isOk() }
+
+            content {
+                jsonPath("$.id", equalTo(61))
+                jsonPath("$.textSetId", equalTo(60))
+                jsonPath("$.text", equalTo("Hello"))
+            }
+        }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns FORBIDDEN if no authentication`() {
+        mockMvc.delete("/text-set/110/join-link/110").andExpect { status { isForbidden() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if authenticated as a TextSet's Reader`() {
+        mockMvc.delete("/text-set/110/join-link/110") { auth(111) }.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if JoinLink doesn't exist`() {
+        mockMvc.delete("/text-set/110/join-link/-69"){auth(110)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns BAD REQUEST if JoinLink exist but in another TextSet`() {
+        mockMvc.delete("/text-set/0/join-link/111"){auth(110)}.andExpect { status { isBadRequest() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint returns OK if user is TextSet owner and JoinLink exists`() {
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect { status { isNoContent() } }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint makes JoinLink table shorter`() {
+        val b = joinLinkDao.findAll().count()
+
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+            status { isNoContent() }
+
+            val n = joinLinkDao.findAll().count()
+            assertTrue(b > n)
+        }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint makes JoinLink table shorter by 1`() {
+        val b = joinLinkDao.findAll().count()
+
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+            status { isNoContent() }
+
+            val n = joinLinkDao.findAll().count()
+            assertEquals(b - 1, n)
+        }
+    }
+
+    @Test
+    fun `deleteJoinLinkByIdEndpoint deletes JoinLink from database`() {
+        val id = 111
+        assertTrue(joinLinkDao.findAll().any {it.id == id})
+
+        mockMvc.delete("/text-set/110/join-link/111"){auth(110)}.andExpect {
+            status { isNoContent() }
+
+            assertFalse(joinLinkDao.findAll().any {it.id == id})
+        }
+    }
 }
