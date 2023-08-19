@@ -344,6 +344,50 @@ paths:
           name: id
 
 
+  /register:
+    post:
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                emailAddress:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+      tags:
+        - Registration
+      responses:
+        '204':
+          description: OK - Verification email is sent
+        '400':
+          description: Bad Request - See body to understand the error, potentially returned the "EmailOrUsernameIsTaken".
+
+  /register/confirm:
+    post:
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                emailAddress:
+                  type: string
+                code:
+                  description: Verification code sent to your email
+                  type: string
+      tags:
+        - Registration
+      responses:
+        '204':
+          description: OK - User created
+        '400':
+          description: Bad Request - Something wrong, probably there's bad email or verification code.
+
+
   /text-set/text/by-id/{textId}:
     get:
       parameters:

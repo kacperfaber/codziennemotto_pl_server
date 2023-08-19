@@ -11,4 +11,16 @@ class UserService(private val userDao: UserDao) {
     fun getUser(id: Int): User? {
         return userDao.findById(id).getOrNull()
     }
+
+    fun createUser(username: String, emailAddress: String, passwordHash: String): User? {
+        return userDao.save(User().apply {
+            this.username = username
+            this.email = emailAddress
+            this.passwordHash = passwordHash
+        })
+    }
+
+    fun isUsernameAndEmailNotTaken(username: String, email: String): Boolean {
+        return userDao.getByUsernameIgnoreCaseOrEmailIgnoreCase(username, email) == null
+    }
 }
