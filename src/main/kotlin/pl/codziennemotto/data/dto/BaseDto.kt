@@ -8,5 +8,5 @@ open class BaseDto {
     @Id
     @GenericGenerator(name = "id_generator", strategy = "pl.codziennemotto.data.IdGenerator")
     @GeneratedValue(generator = "id_generator")
-    open var id: Int = 0
+    open var id: Int? = null
 }

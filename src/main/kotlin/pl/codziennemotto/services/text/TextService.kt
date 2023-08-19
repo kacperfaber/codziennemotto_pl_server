@@ -130,7 +130,7 @@ class TextService(
         val readers = getReadersAsTextSetOwner(textSetId, authorizedUser) ?: return null
         return readers.map {
             val user = userService.getUser(it.userId!!)!!
-            return@map ReaderIncludeUser(it, user.username, user.id)
+            return@map ReaderIncludeUser(it, user.username, user.id!!)
         }
     }
 
