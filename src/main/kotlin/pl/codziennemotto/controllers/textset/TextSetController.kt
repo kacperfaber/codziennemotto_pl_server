@@ -110,4 +110,7 @@ class TextSetController(
 
     @GetMapping("/text/by-id/{textId}")
     fun textByJustIdEndpoint(@PathVariable textId: Int): ResponseEntity<Text> = of(textService.getTextById(user!!, textId))
+
+    @PostMapping("join-with-code/{code}")
+    fun joinWithCode(@PathVariable code: String): ResponseEntity<Reader?> = of(textService.joinWithCode(user!!, code))
 }

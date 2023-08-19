@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 
 @Configuration
+@Profile("prod")
 class MailerBean {
     @Value("\${mailer.smtp}")
     lateinit var smtp: String
@@ -22,7 +23,6 @@ class MailerBean {
     lateinit var password: String
 
     @Bean
-    @Profile("prod")
     fun mailer(): Mailer {
         return MailerBuilder.withSMTPServer(smtp, port)
                 .withSMTPServerUsername(username)

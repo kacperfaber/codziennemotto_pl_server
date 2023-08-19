@@ -1,33 +1,24 @@
 package pl.codziennemotto.controllers.textset
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import org.assertj.core.util.Lists
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.kotlin.isNotNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.data.rest.webmvc.json.JsonSchema
 import org.springframework.http.MediaType
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.*
-import pl.codziennemotto.data.dao.JoinLinkDao
-import pl.codziennemotto.data.dao.ReaderDao
-import pl.codziennemotto.data.dao.TextDao
-import pl.codziennemotto.data.dao.TextSetDao
+import pl.codziennemotto.data.dao.*
 import pl.codziennemotto.data.dto.TextSet
-import pl.codziennemotto.services.text.TextService
 import testutils.IntegrationTest
 import testutils.WebLayerTest
 import testutils.auth
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
@@ -768,33 +759,33 @@ class TextSetControllerWebTest {
 
     @Test
     fun `textByJustIdEndpoint returns BAD REQUEST if authorized user is not permited to see this data`() {
-        mockMvc.get("/text-set/text/by-id/1120"){auth(1122)}.andExpect { status { isBadRequest() } }
+        mockMvc.get("/text-set/text/by-id/1120") { auth(1122) }.andExpect { status { isBadRequest() } }
     }
 
     @Test
     fun `textByJustIdEndpoint returns BAD REQUEST if authorized user is reader and Text is future`() {
-        mockMvc.get("/text-set/text/by-id/1120"){auth(1121)}.andExpect { status { isBadRequest() } }
+        mockMvc.get("/text-set/text/by-id/1120") { auth(1121) }.andExpect { status { isBadRequest() } }
     }
 
 
     @Test
     fun `textByJustIdEndpoint returns OK if authorized user is reader and Text is past`() {
-        mockMvc.get("/text-set/text/by-id/1121"){auth(1121)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/text/by-id/1121") { auth(1121) }.andExpect { status { isOk() } }
     }
 
     @Test
     fun `textByJustIdEndpoint returns OK if authorized is owner and Text is past`() {
-        mockMvc.get("/text-set/text/by-id/1121"){auth(1120)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/text/by-id/1121") { auth(1120) }.andExpect { status { isOk() } }
     }
 
     @Test
     fun `textByJustIdEndpoint returns OK if authorized is owner and Text is future`() {
-        mockMvc.get("/text-set/text/by-id/1120"){auth(1120)}.andExpect { status { isOk() } }
+        mockMvc.get("/text-set/text/by-id/1120") { auth(1120) }.andExpect { status { isOk() } }
     }
 
     @Test
     fun `textByJustIdEndpoint returns expected Text data - scenario 1`() {
-        mockMvc.get("/text-set/text/by-id/1120"){auth(1120)}.andExpect {
+        mockMvc.get("/text-set/text/by-id/1120") { auth(1120) }.andExpect {
             status { isOk() }
 
             content {
@@ -808,7 +799,7 @@ class TextSetControllerWebTest {
 
     @Test
     fun `textByJustIdEndpoint returns expected Text data - scenario 2`() {
-        mockMvc.get("/text-set/text/by-id/1121"){auth(1120)}.andExpect {
+        mockMvc.get("/text-set/text/by-id/1121") { auth(1120) }.andExpect {
             status { isOk() }
 
             content {
@@ -818,5 +809,49 @@ class TextSetControllerWebTest {
                 jsonPath("$.shown", equalTo("2020-03-12"))
             }
         }
+    }
+
+    @Test
+    fun `joinWithCodeEndpoint returns FORBIDDEN if no auth`() {
+        mockMvc.post("/text-set/join-with-code/TEST123").andExpect {
+            status { isForbidden() }
+        }
+    }
+
+    @Test
+    fun `joinWithCodeEndpoint returns BAD_REQUEST if authenticated but bad code`() {
+        mockMvc.post("/text-set/join-with-code/this-code-not-exists") { auth(10005) }.andExpect {
+            status { isBadRequest() }
+        }
+    }
+
+    @Test
+    fun `joinWithCodeEndpoint returns OK and expected body`() {
+        mockMvc.post("/text-set/join-with-code/TEST123") { auth(10006) }.andExpect {
+            status { isOk() }
+
+            content {
+                jsonPath("$.textSetId", equalTo(10005))
+                jsonPath("$.userId", equalTo(10006))
+            }
+        }
+    }
+
+    @Autowired
+    lateinit var userDao: UserDao
+
+    @OptIn(ExperimentalStdlibApi::class)
+    @Test
+    fun `joinWithCodeEndpoint returns OK and makes Reader record in database`() {
+        mockMvc.post("/text-set/join-with-code/TEST123") { auth(10006) }.andExpect {
+            status { isOk() }
+        }
+
+        val user = userDao.findById(10006).getOrNull()!!
+        val textSet = textSetDao.findById(10005).getOrNull()!!
+
+        val reader = readerDao.getByUserAndTextSet(user, textSet)
+
+        assertNotNull(reader)
     }
 }

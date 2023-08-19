@@ -343,6 +343,24 @@ paths:
             type: integer
           name: id
 
+  /text-set/join-with-code/{code}:
+    post:
+      tags:
+        - JoinLink
+      parameters:
+        - in: path
+          name: code
+      responses:
+        '200':
+          description: OK - Reader created.
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Reader"
+        '403':
+          description: Forbidden - No valid authentication.
+        '400':
+          description: Bad request - probably there's no code in database.
 
   /register:
     post:

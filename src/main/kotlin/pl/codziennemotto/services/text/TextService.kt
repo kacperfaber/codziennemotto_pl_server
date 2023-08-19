@@ -14,6 +14,7 @@ import pl.codziennemotto.services.reader.ReaderService
 import pl.codziennemotto.services.user.UserService
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrNull
 
 @Component
 class TextService(
@@ -169,5 +170,13 @@ class TextService(
         }
 
         return null
+    }
+
+    fun joinWithCode(authorizedUser: User, code: String): Reader? {
+        val joinLink = joinLinkDao.getByCode(code) ?: return null
+        return readerService.createReader(authorizedUser, joinLink.textSet).apply {
+            textSetId = joinLink.textSet.id!!
+            userId = authorizedUser.id!!
+        }
     }
 }
