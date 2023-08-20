@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "`user`")
+@Table(name = "users50")
 open class User : BaseDto() {
     open lateinit var email: String
 
