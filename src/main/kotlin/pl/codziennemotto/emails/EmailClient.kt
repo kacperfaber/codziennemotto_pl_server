@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 @Component
 @Profile("prod")
 class EmailClient(private val mailer: Mailer) {
-    @Value("\${mailer.from")
+    @Value("\${mailer.from}")
     lateinit var from: String
 
     fun sendTextMail(subject: String, to: String, body: String) {
