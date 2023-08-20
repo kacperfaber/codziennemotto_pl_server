@@ -11,6 +11,6 @@ interface UserDao : JpaRepository<User, Int> {
 
     fun getByUsernameIgnoreCaseOrEmailIgnoreCase(username: String, email: String): User?
 
-    @Query("SELECT * FROM `user` WHERE (username = :x) OR (email = :x) LIMIT 1;", nativeQuery = true)
+    @Query("SELECT * FROM users50 WHERE (username = :x) OR (email = :x) LIMIT 1;", nativeQuery = true)
     fun getByUsernameOrEmail(@Param("x") usernameOrEmail: String): User?
 }

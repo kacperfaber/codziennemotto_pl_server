@@ -1,6 +1,6 @@
-INSERT INTO `user`(id, email, username, password_hash) VALUES (1, 'kacperf1234@gmail.com', 'kacperfaber', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (2, 'marekfaber@gmail.com', 'MakerXD', 'HelloTest555_');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (3, 'darekfatek@gmail.com', 'Darek555', 'HelloTest');
+INSERT INTO users50(id, email, username, password_hash) VALUES (1, 'kacperf1234@gmail.com', 'kacperfaber', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (2, 'marekfaber@gmail.com', 'MakerXD', 'HelloTest555_');
+INSERT INTO users50(id, email, username, password_hash) VALUES (3, 'darekfatek@gmail.com', 'Darek555', 'HelloTest');
 
 INSERT INTO text_set(id, owner_id, title, description) VALUES (0, 1, 'HelloWorld!', 'This is the greatest set in the page.');
 
@@ -16,8 +16,8 @@ INSERT INTO text_set(id, owner_id, title, description) VALUES (1, 1, 'The better
 INSERT INTO text(id, text_set_id, text, _order_) VALUES (100, 1, 'Sample Value1', 0);
 INSERT INTO text(id, text_set_id, text, _order_) VALUES (101, 1, 'Sample Value2', 1);
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES(10, 'test-owner@gmail.com', 'test-user', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES(11, 'test-reader@gmail.com', 'test-reader', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES(10, 'test-owner@gmail.com', 'test-user', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES(11, 'test-reader@gmail.com', 'test-reader', 'HelloWorld123');
 
 INSERT INTO text_set(id, owner_id, title, description) VALUES (10, 10, 'test-user property!', 'Hello World!');
 
@@ -28,8 +28,8 @@ INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (50, 10, 'Sample 
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (51, 10, 'Sample Value2', 1, NULL);
 
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES(-50, 'link-creator@gmail.com', 'join-link-owner', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES(-51, 'link-user@gmail.com', 'linker', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES(-50, 'link-creator@gmail.com', 'join-link-owner', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES(-51, 'link-user@gmail.com', 'linker', 'HelloWorld123');
 
 INSERT INTO text_set(id, owner_id, title, description) VALUES (-50, -50, 'test-user property!', 'Hello World!');
 
@@ -42,15 +42,15 @@ INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(-52, -50, 'Z',
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (-50, -50, 'Sample Value1', 0, CURRENT_DATE);
 INSERT INTO text(id, text_set_id, text, _order_, shown) VALUES (-51, -50, 'Sample Value2', 1, NULL);
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES (30, 'helloworld@java.com', 'helloWorld', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (31, 'helloworld2@java.com', 'helloWorld2', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (30, 'helloworld@java.com', 'helloWorld', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (31, 'helloworld2@java.com', 'helloWorld2', 'HelloWorld123');
 INSERT INTO text_set(id, owner_id, title, description) VALUES (30, 30, 'No Texts List', 'no');
 INSERT INTO reader(id, user_id, text_set_id) VALUES (31, 31, 30);
 
 
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES (60, 'test-id-60@gmail.com', 'test-id-60', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (61, 'test-id-61@gmail.com', 'test-id-61', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (60, 'test-id-60@gmail.com', 'test-id-60', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (61, 'test-id-61@gmail.com', 'test-id-61', 'HelloWorld123');
 
 INSERT INTO text_set(id, owner_id, title, description) VALUES(60, 60, '', '');
 
@@ -61,8 +61,8 @@ INSERT INTO reader(id, user_id, text_set_id) VALUES (61, 61, 60);
 
 
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES (110, 'test-id-110@gmail.com', 'test-id-110', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (111, 'test-id-111@gmail.com', 'test-id-111', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (110, 'test-id-110@gmail.com', 'test-id-110', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (111, 'test-id-111@gmail.com', 'test-id-111', 'HelloWorld123');
 INSERT INTO text_set(id, owner_id, title, description) VALUES(110, 110, '', '');
 INSERT INTO reader(id, user_id, text_set_id) VALUES (110, 111, 110);
 INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(110, 110, 'abc', '2100-05-05');
@@ -71,16 +71,16 @@ INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(112, 110, 'abc
 
 
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES (1120, 'test-id-120@gmail.com', 'test-id-120', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (1121, 'test-id-121@gmail.com', 'test-id-121', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (1122, 'test-id-122@gmail.com', 'test-id-122', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (1120, 'test-id-120@gmail.com', 'test-id-120', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (1121, 'test-id-121@gmail.com', 'test-id-121', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (1122, 'test-id-122@gmail.com', 'test-id-122', 'HelloWorld123');
 INSERT INTO text_set(id, owner_id, title, description) VALUES(1120, 1120, '', '');
 INSERT INTO text(id, text_set_id, _order_, shown, text) VALUES (1120, 1120, 0, NULL, 'Hello');
 INSERT INTO text(id, text_set_id, _order_, shown, text) VALUES (1121, 1120, 0, '2020-03-12', 'World');
 INSERT INTO reader(id, user_id, text_set_id) VALUES (1120, 1121, 1120);
 
 
-INSERT INTO `user`(id, email, username, password_hash) VALUES (10005, 'test-id-10005@gmail.com', 'test-id-10005', 'HelloWorld123');
-INSERT INTO `user`(id, email, username, password_hash) VALUES (10006, 'test-id-10006@gmail.com', 'test-id-10006', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (10005, 'test-id-10005@gmail.com', 'test-id-10005', 'HelloWorld123');
+INSERT INTO users50(id, email, username, password_hash) VALUES (10006, 'test-id-10006@gmail.com', 'test-id-10006', 'HelloWorld123');
 INSERT INTO text_set(id, owner_id, title, description) VALUES(10005, 10005, 'Hello', 'World');
 INSERT INTO join_link(id, text_set_id, code, active_until) VALUES(10005, 10005, 'TEST123', '2100-05-05');
