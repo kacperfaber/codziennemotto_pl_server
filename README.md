@@ -2,10 +2,10 @@
 
 codziennemotto.pl - API Server, made in **spring** 😎😋
 <br>
-See [cross-platform application]()
+See [cross-platform application](https://www.github.com/kacperfaber/codziennemotto-pl-app)
 
 [![Integration Tests](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml)
-[![Integration Tests](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/web-tests.yml)
+[![Web Tests](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/web-tests.yml)
 
 ## Install 
 
