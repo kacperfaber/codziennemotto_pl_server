@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.github.jk1.license.render.*
+import com.github.jk1.license.importer.*
 
 plugins {
     id 'org.springframework.boot' version '3.0.2'
@@ -6,7 +8,10 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.7.22'
     id 'org.jetbrains.kotlin.plugin.spring' version '1.7.22'
     id 'org.jetbrains.kotlin.plugin.jpa' version '1.7.22'
+    id 'com.github.jk1.dependency-license-report' version '2.5'
 }
+
+apply plugin: 'com.github.jk1.dependency-license-report';
 
 group = 'pl.codziennemotto'
 version = '1.0.0-beta.1'
@@ -14,6 +19,13 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
+}
+
+licenseReport {
+    outputDir = "$projectDir/licenses"
+
+    renderers = [new XmlReportRenderer('third-party-libs.xml', 'Third Party Libraries')]
+    allowedLicensesFile = "$projectDir/licenses/allowed.json"
 }
 
 dependencies {
