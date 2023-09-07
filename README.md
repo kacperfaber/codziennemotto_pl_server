@@ -57,6 +57,7 @@ Configuration file it's generally a .properties file. File name is dynamic and i
 # Security #
 # ======== #
 
+# cors.allow-origin: Access-Control-Allow-Origin header with this value will be added to each response.
 # token_hasher.secret: Will encode/decode access tokens using this secret (using AES algorithm)
 # password_encoder.secret: Will encode and compare user passwords using PBKDF2 algorithm
 
