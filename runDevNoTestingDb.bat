@@ -1,0 +1,1 @@
+gradle :bootRun --args="--spring.profiles.active=test --testing.initdb=false"
