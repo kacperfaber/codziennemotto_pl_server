@@ -20,9 +20,9 @@ class SetupTestDb(private val joinLinkDao: JoinLinkDao, private val userDao: Use
     private fun setupUser(): User {
         return userDao.save(User().apply {
             id = 0
-            email = "kacperf1234@gmail.com"
+            email = "user0@gmail.com"
             passwordHash = "HelloWorld123"
-            username = "kacperf1234"
+            username = "user0"
         })
     }
 
