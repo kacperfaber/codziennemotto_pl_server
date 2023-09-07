@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource
 
 @SpringBootApplication
 @ServletComponentScan
-@PropertySource("classpath:application.\${spring.profiles.active}.properties")
+@PropertySource("file:application.\${spring.profiles.active}.properties")
 class Main
 
 fun main(args: Array<String>) {
