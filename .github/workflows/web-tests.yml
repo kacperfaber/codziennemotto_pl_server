@@ -21,7 +21,7 @@ jobs:
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
       
-    - name: Integration Tests using gradle
+    - name: Web Layer Tests using gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25
       with:
-        arguments: webTests
+        arguments: webLayerTest
