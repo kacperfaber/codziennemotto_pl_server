@@ -1,11 +1,15 @@
-# test
+# CodzienneMotto.pl
 
 codziennemotto.pl - API Server, made in **spring** 😎😋
+
+**CodzienneMotto.pl** allows you to create a lists of daily quotes, invite users to join your list and schedule quote to specific day
 <br>
 See [cross-platform application](https://www.github.com/kacperfaber/codziennemotto-pl-app)
 
 [![Integration Tests](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml)
 [![Web Tests](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/web-tests.yml)
+
+<img src="assets/banner.png"/>
 
 ## Install 
 
