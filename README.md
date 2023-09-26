@@ -1,6 +1,6 @@
 # CodzienneMotto.pl
 
-codziennemotto.pl - API Server, made in **spring** 😎😋
+API Server, made in **Spring** in ❤ Kotlin 😎😋
 
 **CodzienneMotto.pl** allows you to create a lists of daily quotes, invite users to join your list and schedule quote to specific day
 <br>
