@@ -17,7 +17,7 @@ class AuthenticationController(
     private val tokenService: TokenService,
     private val authenticationService: AuthenticationService
 ) :
-    ControllerBase(userService) {
+    ControllerBase(userService), AuthenticationApi {
 
     class AuthPayload {
         lateinit var login: String
@@ -27,7 +27,7 @@ class AuthenticationController(
     data class AuthResponse(val userId: Int, val userEmail: String, val username: String, val token: String)
 
     @PostMapping("/auth")
-    fun authEndpoint(@RequestBody authPayload: AuthPayload): ResponseEntity<AuthResponse> {
+    override fun authEndpoint(@RequestBody authPayload: AuthPayload): ResponseEntity<AuthResponse> {
         val authenticatedUser = authenticationService.tryAuthenticate(authPayload.login, authPayload.password)
             ?: return badRequest()
 
@@ -37,5 +37,5 @@ class AuthenticationController(
     }
 
     @GetMapping("current")
-    fun currentEndpoint(): ResponseEntity<User> = of(user)
+    override fun currentEndpoint(): ResponseEntity<User> = of(user)
 }

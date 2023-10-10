@@ -23,9 +23,9 @@ class TextSetController(
         private val textService: TextService,
         private val joinLinkService: JoinLinkService,
         private val summaryService: SummaryService
-) : ControllerBase(userService) {
+) : ControllerBase(userService), TextSetApi {
     @PostMapping("{id}/join-with-code/{code}")
-    fun joinWithCodeEndpoint(@PathVariable id: Int, @PathVariable code: String): ResponseEntity<Reader?> {
+    override fun joinWithCodeEndpoint(@PathVariable id: Int, @PathVariable code: String): ResponseEntity<Reader?> {
         val result = textService.joinWithCode(id, user!!, code)
 
         return when (result.result) {
@@ -35,19 +35,19 @@ class TextSetController(
     }
 
     @GetMapping("{id}")
-    fun textSetByIdEndpoint(@PathVariable id: Int): ResponseEntity<TextSet> = of(textService.getTextSet(id, user!!))
+    override fun textSetByIdEndpoint(@PathVariable id: Int): ResponseEntity<TextSet> = of(textService.getTextSet(id, user!!))
 
     @GetMapping("{id}/readers")
-    fun readersByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Reader>> = of(textService.getTextSetReaders(id, user!!))
+    override fun readersByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Reader>> = of(textService.getTextSetReaders(id, user!!))
 
     @GetMapping("{id}/texts/all")
-    fun textsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getAllTexts(id, user!!))
+    override fun textsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getAllTexts(id, user!!))
 
     @GetMapping("{id}/texts/all/visible")
-    fun allVisibleTextsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getAllVisibleTexts(id, user!!))
+    override fun allVisibleTextsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getAllVisibleTexts(id, user!!))
 
     @GetMapping("{id}/texts/past")
-    fun pastTextsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getPastTexts(id, user!!))
+    override fun pastTextsByIdEndpoint(@PathVariable id: Int): ResponseEntity<List<Text>> = of(textService.getPastTexts(id, user!!))
 
     class AddTextPayload {
         lateinit var text: String
@@ -58,7 +58,7 @@ class TextSetController(
     }
 
     @PutMapping("{id}/add")
-    fun addTextByIdEndpoint(@PathVariable id: Int, @RequestBody payload: AddTextPayload): ResponseEntity<Text> =
+    override fun addTextByIdEndpoint(@PathVariable id: Int, @RequestBody payload: AddTextPayload): ResponseEntity<Text> =
             of(textService.addText(id, user!!, payload.text, payload.date, payload.order))
 
     class CreateNewTextSetPayload {
@@ -67,50 +67,50 @@ class TextSetController(
     }
 
     @PostMapping("/create-new")
-    fun createNewTextSetEndpoint(@RequestBody payload: CreateNewTextSetPayload): ResponseEntity<TextSet> =
+    override fun createNewTextSetEndpoint(@RequestBody payload: CreateNewTextSetPayload): ResponseEntity<TextSet> =
             of(textService.createNewTextSet(user!!, payload.title, payload.description))
 
     @PostMapping("{id}/create-join-link")
-    fun joinLinkEndpoint(@PathVariable id: Int): ResponseEntity<JoinLink> = of(joinLinkService.createJoinLink(id, user!!))
+    override fun joinLinkEndpoint(@PathVariable id: Int): ResponseEntity<JoinLink> = of(joinLinkService.createJoinLink(id, user!!))
 
     @DeleteMapping("{setId}/{textId}")
-    fun deleteTextByIdEndpoint(@PathVariable setId: Int, @PathVariable textId: Int): ResponseEntity<Boolean> =
+    override fun deleteTextByIdEndpoint(@PathVariable setId: Int, @PathVariable textId: Int): ResponseEntity<Boolean> =
             ofBoolean(textService.deleteText(setId, textId, user!!))
 
     @GetMapping("where-i-am-owner")
-    fun setsIAmOwnerEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByOwner(user!!))
+    override fun setsIAmOwnerEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByOwner(user!!))
 
     @GetMapping("where-i-am-reader")
-    fun setsIAmReaderEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByReader(user!!))
+    override fun setsIAmReaderEndpoint(): ResponseEntity<List<TextSet>> = of(textService.getAllByReader(user!!))
 
     @GetMapping("summary")
-    fun summaryEndpoint(): ResponseEntity<List<SummaryService.SummaryObject>> = ok(summaryService.createSummaryFor(user!!))
+    override fun summaryEndpoint(): ResponseEntity<List<SummaryService.SummaryObject>> = ok(summaryService.createSummaryFor(user!!))
 
     @GetMapping("{setId}/readers/include-users")
-    fun readersIncludeUsersEndpoint(@PathVariable setId: Int): ResponseEntity<Iterable<TextService.ReaderIncludeUser>> = of(textService.getReadersIncludeUsers(user!!, setId))
+    override fun readersIncludeUsersEndpoint(@PathVariable setId: Int): ResponseEntity<Iterable<TextService.ReaderIncludeUser>> = of(textService.getReadersIncludeUsers(user!!, setId))
 
     @DeleteMapping("{setId}")
-    fun deleteTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteTextSet(user!!, setId))
+    override fun deleteTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteTextSet(user!!, setId))
 
     @GetMapping("{setId}/join-links")
-    fun joinLinksEndpoint(@PathVariable setId: Int): ResponseEntity<List<JoinLink>> = of(joinLinkService.getJoinLinks(setId, user!!))
+    override fun joinLinksEndpoint(@PathVariable setId: Int): ResponseEntity<List<JoinLink>> = of(joinLinkService.getJoinLinks(setId, user!!))
 
     @DeleteMapping("{setId}/quit")
-    fun quitTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.quit(user!!, setId))
+    override fun quitTextSetByIdEndpoint(@PathVariable setId: Int): ResponseEntity<Boolean> = ofBoolean(textService.quit(user!!, setId))
 
     @GetMapping("{setId}/{textId}")
-    fun textByIdEndpoint(@PathVariable textId: Int, @PathVariable setId: Int): ResponseEntity<Text> = of(textService.getTextByIdAndSetId(user!!, textId, setId))
+    override fun textByIdEndpoint(@PathVariable textId: Int, @PathVariable setId: Int): ResponseEntity<Text> = of(textService.getTextByIdAndSetId(user!!, textId, setId))
 
     @DeleteMapping("{setId}/join-link/{joinLinkId}")
-    fun deleteJoinLinkByIdEndpoint(@PathVariable setId: Int, @PathVariable joinLinkId: Int): ResponseEntity<Boolean> = ofBoolean(joinLinkService.deleteJoinLink(user!!, setId, joinLinkId))
+    override fun deleteJoinLinkByIdEndpoint(@PathVariable setId: Int, @PathVariable joinLinkId: Int): ResponseEntity<Boolean> = ofBoolean(joinLinkService.deleteJoinLink(user!!, setId, joinLinkId))
 
 
     @DeleteMapping("{setId}/readers/{readerId}")
-    fun deleteReaderByIdEndpoint(@PathVariable setId: Int, @PathVariable readerId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteReader(user!!, setId, readerId))
+    override fun deleteReaderByIdEndpoint(@PathVariable setId: Int, @PathVariable readerId: Int): ResponseEntity<Boolean> = ofBoolean(textService.deleteReader(user!!, setId, readerId))
 
     @GetMapping("/text/by-id/{textId}")
-    fun textByJustIdEndpoint(@PathVariable textId: Int): ResponseEntity<Text> = of(textService.getTextById(user!!, textId))
+    override fun textByJustIdEndpoint(@PathVariable textId: Int): ResponseEntity<Text> = of(textService.getTextById(user!!, textId))
 
     @PostMapping("join-with-code/{code}")
-    fun joinWithCode(@PathVariable code: String): ResponseEntity<Reader?> = of(textService.joinWithCode(user!!, code))
+    override fun joinWithCode(@PathVariable code: String): ResponseEntity<Reader?> = of(textService.joinWithCode(user!!, code))
 }

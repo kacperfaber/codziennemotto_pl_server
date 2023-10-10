@@ -73,11 +73,9 @@ Configuration file it's generally a .properties file. File name is dynamic and i
 ```
 
 ## See API docs
-Swagger API is stored here: **api/api.yaml**
-
-```shell
-# To see text it in editor.
-vim api/api.yaml
+Swagger UI is here
+```http request
+/swagger-ui/index.html
 ```
 
 ## Author

@@ -10,12 +10,12 @@ import pl.codziennemotto.services.user.UserService
 
 @RestController
 @RequestMapping("server")
-class ServerController(userService: UserService) : ControllerBase(userService) {
+class ServerController(userService: UserService) : ControllerBase(userService), ServerApi {
     @Value("\${spring.profiles.active}")
     lateinit var activeProfile: String
 
     data class ProfileResponse(val profile: String)
 
     @GetMapping("profile")
-    fun profileEndpoint(): ResponseEntity<ProfileResponse> = ok(ProfileResponse(activeProfile))
+    override fun profileEndpoint(): ResponseEntity<ProfileResponse> = ok(ProfileResponse(activeProfile))
 }

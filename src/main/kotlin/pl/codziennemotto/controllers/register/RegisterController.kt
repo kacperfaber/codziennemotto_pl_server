@@ -15,14 +15,14 @@ fun RegisterResult.respond(): ResponseEntity<RegisterResult> {
 }
 
 @RestController
-class RegisterController(userService: UserService, private val userRegistrationService: UserRegistrationService) : ControllerBase(userService) {
+class RegisterController(userService: UserService, private val userRegistrationService: UserRegistrationService) : ControllerBase(userService), RegisterApi {
     @PostMapping("/register")
-    fun registerEndpoint(@RequestBody p: RegisterPayload): ResponseEntity<RegisterResult> {
+    override fun registerEndpoint(@RequestBody p: RegisterPayload): ResponseEntity<RegisterResult> {
         return userRegistrationService.register(p.username, p.emailAddress, p.password).respond()
     }
 
     @PostMapping("/register/confirm")
-    fun confirmEndpoint(@RequestBody p: ConfirmPayload): ResponseEntity<Boolean> {
+    override fun confirmEndpoint(@RequestBody p: ConfirmPayload): ResponseEntity<Boolean> {
         return ofBoolean(userRegistrationService.confirm(p.emailAddress, p.code))
     }
 }
