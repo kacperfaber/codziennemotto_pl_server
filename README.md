@@ -6,10 +6,9 @@ API Server, made in **Spring** in ❤ Kotlin 😎😋
 <br>
 See [cross-platform application](https://www.github.com/kacperfaber/codziennemotto-pl-app)
 
-[![Integration Tests](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml)
-[![Web Tests](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/web-tests.yml)
+[![Build](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/build.yml/badge.svg)](https://github.com/kacperfaber/codziennemotto_pl_server/actions/workflows/build.yml)
 
-<img src="assets/banner.png"/>
+<img alt="banner" src="assets/banner.png"/>
 
 ## Install 
 
